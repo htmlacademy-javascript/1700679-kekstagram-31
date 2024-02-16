@@ -1,5 +1,5 @@
 
-const isStringLength = (string, strLength) => string.length === strLength;
+const isStringLength = (string, strLength) => string.length <= strLength;
 
 console.log(isStringLength('проверяемая   строка', 20));
 console.log(isStringLength('проверяемая строка', 10));
