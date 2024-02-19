@@ -13,8 +13,8 @@ const isPallindrom = (string) => {
   return reverseString === string;
 };
 
-console.log(isPallindrom("топот"));
-console.log(isPallindrom("ДовОд"));
+console.log(isPallindrom('топот'));
+console.log(isPallindrom('ДовОд'));
 console.log(isPallindrom('Лёша на полке клопа нашёл'));
 console.log(isPallindrom('Лёша на полке клопа нл'));
 
@@ -23,10 +23,10 @@ const getNumbers = (num) => {
   let numStr = num.map((el) => isNaN(Number(el)) ? '' : el);
   numStr = numStr.join('');
   if (!numStr.length) {
-    numStr += 'NaN';
+    return NaN;
   }
 
-  return numStr;
+  return Number(numStr);
 };
 
 console.log(getNumbers('2023 год'));
