@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 const isStringLength = (string, strLength) => string.length <= strLength;
 
 console.log(isStringLength('проверяемая   строка', 20));
@@ -12,6 +12,7 @@ const isPallindrom = (string) => {
   }
   return reverseString === string;
 };
+
 
 console.log(isPallindrom('топот'));
 console.log(isPallindrom('ДовОд'));
