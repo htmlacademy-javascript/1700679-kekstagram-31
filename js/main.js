@@ -1,3 +1,3 @@
-import {generateImagePosts} from './util.js';
+import {createThumbnails} from './thumbnails';
 
-console.log(generateImagePosts(25, 30));
+createThumbnails();
