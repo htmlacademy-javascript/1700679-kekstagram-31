@@ -1,4 +1,5 @@
 import { generateImagePosts } from './util.js';
+import { showBigPicture } from './bigPicture.js';
 
 const pictureTemplate = document.querySelector('#picture')
   .content.querySelector('.picture');
@@ -14,8 +15,14 @@ const postParser = (post) => {
   likes.textContent = post.likes;
   comments.textContent = post.comments.length;
 
+
+  pictureElement.addEventListener('click', () => {
+    showBigPicture(post);
+  });
+
   return pictureElement;
 };
+
 
 export const createThumbnails = () => {
   const posts = generateImagePosts(25, 30);
@@ -29,5 +36,3 @@ export const createThumbnails = () => {
 
   pictures.appendChild(fragment);
 };
-
-
