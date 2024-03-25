@@ -1,5 +1,5 @@
 import { generateImagePosts } from './util.js';
-import { showBigPicture, closeBigPicture } from './bigPicture.js';
+import { showBigPicture } from './bigPicture.js';
 
 const pictureTemplate = document.querySelector('#picture')
   .content.querySelector('.picture');
@@ -36,5 +36,3 @@ export const createThumbnails = () => {
 
   pictures.appendChild(fragment);
 };
-
-closeBigPicture();

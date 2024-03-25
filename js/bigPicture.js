@@ -19,6 +19,11 @@ const renderImageAndDescription = (post) => {
 
 const renderComments = (post) => {
   const commentsContainer = document.querySelector('.social__comments');
+
+  while (commentsContainer.firstChild) {
+    commentsContainer.removeChild(commentsContainer.firstChild);
+  }
+
   post.comments.forEach((comment) => {
     const commentItem = document.createElement('li');
     commentItem.classList.add('social__comment');
@@ -59,7 +64,15 @@ const close = () => {
   bigPicture.classList.add('hidden');
 };
 
-export const closeBigPicture = () => {
+const clickHandler = () => {
+  close();
+  const closeButton = document.getElementById('picture-cancel');
+  closeButton.removeEventListener('click', clickHandler);
+};
+
+const setupCloseHandlers = () => {
+  const closeButton = document.getElementById('picture-cancel');
+
   const closeHandler = (event) => {
     if (event.key === 'Escape' || event.code === 'Escape') {
       close();
@@ -68,12 +81,6 @@ export const closeBigPicture = () => {
   };
 
   document.addEventListener('keydown', closeHandler);
-
-  const closeButton = document.getElementById('picture-cancel');
-  const clickHandler = () => {
-    close();
-    closeButton.removeEventListener('click', clickHandler);
-  };
   closeButton.addEventListener('click', clickHandler);
 };
 
@@ -81,4 +88,9 @@ export const showBigPicture = (post) => {
   openModal();
   renderImageAndDescription(post);
   renderComments(post);
+
+  const closeButton = document.getElementById('picture-cancel');
+  closeButton.removeEventListener('click', clickHandler);
+
+  setupCloseHandlers(clickHandler);
 };
