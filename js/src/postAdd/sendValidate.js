@@ -28,7 +28,6 @@ const sendImage = async (post) => {
     post.reset();
     modal.classList.remove('show');
     closeEditor(true);
-    // eslint-disable-next-line no-shadow
     submitButton.disabled = false;
   }
 };
