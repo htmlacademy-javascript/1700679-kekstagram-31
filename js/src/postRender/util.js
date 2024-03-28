@@ -1,4 +1,4 @@
-import {getData} from './data.js';
+import {getData} from '../data/data.js';
 
 
 const generateRandomNumber = (min, max) => {
