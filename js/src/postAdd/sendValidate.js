@@ -22,18 +22,13 @@ const hideMessage = (messageSelector) => {
 };
 
 const sendImage = async (post) => {
-
-  submitButton.disabled = true;
-
-  try {
+  if (post.checkValidity()) {
+    submitButton.disabled = true;
     displayMessage(successTemplate);
     post.reset();
     modal.classList.remove('show');
     closeEditor(true);
     // eslint-disable-next-line no-shadow
-  } catch (error) {
-    displayMessage(errorTemplate);
-  } finally {
     submitButton.disabled = false;
   }
 };
