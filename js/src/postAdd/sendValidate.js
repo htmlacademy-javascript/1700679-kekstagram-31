@@ -1,46 +1,21 @@
 import {closeEditor} from './addPostForm';
 import displayMessage from './displayMessage';
 
+const uploadImageForm = document.querySelector('.img-upload__form');
+const submitButton = uploadImageForm.querySelector('.img-upload__submit');
+const successTemplate = document.querySelector('#success');
+const errorTemplate = document.querySelector('#error');
+const modal = document.querySelector('.img-upload__overlay');
 const MAX_COMMENT_LENGTH = 140;
 const MAX_HASHTAG_COUNT = 5;
 const MAX_HASHTAG_LENGTH = 20;
 const ERROR_MESSAGE_FOR_COMMENTS = 'Длина комментария больше 140 символов.';
 
-const uploadImageForm = document.querySelector('.img-upload__form');
 const hashtags = uploadImageForm.querySelector('.text__hashtags');
 const descriptions = uploadImageForm.querySelector('.text__description');
-const submitButton = uploadImageForm.querySelector('.img-upload__submit');
-const successTemplate = document.querySelector('#success');
-const errorTemplate = document.querySelector('#error');
-const modal = document.querySelector('.img-upload__overlay');
-
-const hideMessage = (messageSelector) => {
-  const messageElement = document.querySelector(messageSelector);
-  if (messageElement) {
-    messageElement.remove();
-  }
-};
-
-const sendImage = async (post) => {
-  if (post.checkValidity()) {
-    submitButton.disabled = true;
-    displayMessage(successTemplate);
-    post.reset();
-    modal.classList.remove('show');
-    closeEditor(true);
-    submitButton.disabled = false;
-  }
-};
-
 
 let errorMessage = '';
 
-const pristineConfig = new Pristine(uploadImageForm, {
-  classTo: 'img-upload__field-wrapper',
-  errorTextParent: 'img-upload__field-wrapper',
-  errorTextClass: 'img-upload__field-wrapper--error',
-  errorTextTag: 'div',
-});
 
 const error = () => errorMessage;
 
@@ -96,23 +71,45 @@ const isHashtagsValid = (value) => {
 };
 
 const isCommentValid = (value) => value.length <= MAX_COMMENT_LENGTH;
+let pristineConfig = null;
 
-pristineConfig.addValidator(hashtags, isHashtagsValid, error);
-pristineConfig.addValidator(descriptions, isCommentValid, ERROR_MESSAGE_FOR_COMMENTS);
+export const destroyPristine = () => {
+  if (pristineConfig) {
+    pristineConfig.reset();
+    pristineConfig.destroy();
+    pristineConfig = null;
+  }
+};
+export const createPristine = (form) => {
+  if (!pristineConfig){
 
-const hideDataError = () => {
-  const errorElement = document.querySelector('.data-error');
-  if (errorElement) {
-    errorElement.remove();
+    pristineConfig = new Pristine(form, {
+      classTo: 'img-upload__field-wrapper',
+      errorTextParent: 'img-upload__field-wrapper',
+      errorTextClass: 'img-upload__field-wrapper--error',
+      errorTextTag: 'div',
+    });
+
+    pristineConfig.addValidator(hashtags, isHashtagsValid, error);
+    pristineConfig.addValidator(descriptions, isCommentValid, ERROR_MESSAGE_FOR_COMMENTS);
+  } else{
+    destroyPristine();
+  }
+};
+
+const sendImage = async (post) => {
+  if (post.checkValidity()) {
+    submitButton.disabled = true;
+    displayMessage(successTemplate);
+    post.reset();
+    modal.classList.remove('show');
+    closeEditor(true);
+    submitButton.disabled = false;
   }
 };
 
 const formSubmit = async (event) => {
   event.preventDefault();
-
-  hideDataError();
-  hideMessage(document.querySelector('.success'));
-  hideMessage(document.querySelector('.error'));
 
   const isValid = pristineConfig.validate();
 
