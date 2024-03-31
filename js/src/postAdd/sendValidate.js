@@ -112,23 +112,24 @@ const sendImage = async (post) => {
   }
 };
 
-const formSubmit = async (event) => {
+const formSubmit = async (event, onSuccessfulSubmit) => {
   event.preventDefault();
 
   const isValid = pristineConfig.validate();
 
   if (isValid) {
     await sendImage(event.target);
+    onSuccessfulSubmit();
   } else {
     displayMessage('validate-error');
   }
 };
 
-export const setupFormSubmitHandler = () => {
+export const setupFormSubmitHandler = (event, submit) => {
   if (formSubmitHandler) {
     uploadImageForm.removeEventListener('submit', formSubmitHandler);
   }
 
-  formSubmitHandler = formSubmit;
+  formSubmitHandler = formSubmit(event, submit);
   uploadImageForm.addEventListener('submit', formSubmitHandler);
 };
