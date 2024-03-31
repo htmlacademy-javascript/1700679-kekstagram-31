@@ -1,6 +1,6 @@
-import formSubmit, {createPristine, destroyPristine} from './sendValidate';
-import { initEffectSlider, effectChangeHandler } from './effects';
-import { handleScaleControlSmallerClick, handleScaleControlBiggerClick } from './scale';
+import {createPristine, destroyPristine, setupFormSubmitHandler} from './sendValidate';
+import {effectChangeHandler, initEffectSlider} from './effects';
+import {handleScaleControlBiggerClick, handleScaleControlSmallerClick} from './scale';
 
 const body = document.querySelector('body');
 const uploadForm = document.querySelector('.img-upload__form');
@@ -62,27 +62,27 @@ export const uploadImage = () => {
   });
 
   uploadForm.addEventListener('submit', async (event) => {
+    event.effect = document.querySelector('input[name="effect"]:checked').value;
+    event.effectLevel = effectLevel.value;
+    event.scale = photoEditorForm.querySelector('.scale__control--value').value;
     event.preventDefault();
-    await formSubmit(event, onSuccessfulSubmit);
+    await setupFormSubmitHandler(event, onSuccessfulSubmit);
   });
 };
 
 export function closeEditor(isSuccessfulSubmit = false) {
   photoEditorForm.classList.add('hidden');
   body.classList.remove('modal-open');
-  uploadForm.removeEventListener('submit', formSubmit);
+  uploadForm.removeEventListener('submit', setupFormSubmitHandler);
   scale = 100;
   previewImage.style.transform = `scale(${scale / 100})`;
   scaleControl.value = `${scale}%`;
   effectLevelValue.value = 100;
   effectLevelSlider.noUiSlider.set(100);
+  effectLevelSlider.noUiSlider.off('update');
   effectLevelSlider.noUiSlider.destroy();
   effectItems.forEach((item) => {
-    if (item.value === 'none') {
-      item.checked = true;
-    } else {
-      item.checked = false;
-    }
+    item.checked = item.value === 'none';
   });
   previewImage.style.filter = '';
   previewImage.className = '';

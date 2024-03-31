@@ -1,6 +1,7 @@
-import { generateImagePosts } from './util.js';
 import { showBigPicture } from './bigPicture.js';
-
+import { getData } from '../api/api';
+import displayMessage from '../api/displayMessage';
+let clickHandler = null;
 const pictureTemplate = document.querySelector('#picture')
   .content.querySelector('.picture');
 
@@ -9,30 +10,36 @@ const postParser = (post) => {
   const image = pictureElement.querySelector('.picture__img');
   const likes = pictureElement.querySelector('.picture__likes');
   const comments = pictureElement.querySelector('.picture__comments');
-
   image.src = post.url;
   image.alt = post.description;
   likes.textContent = post.likes;
   comments.textContent = post.comments.length;
 
+  if (clickHandler) {
+    pictureElement.removeEventListener('click', clickHandler);
+  }
 
-  pictureElement.addEventListener('click', () => {
-    showBigPicture(post);
-  });
+  clickHandler = () => showBigPicture(post);
+  pictureElement.addEventListener('click', clickHandler);
 
   return pictureElement;
 };
 
-
 export const createThumbnails = () => {
-  const posts = generateImagePosts(25, 30);
-  const fragment = document.createDocumentFragment();
-  const pictures = document.querySelector('.pictures');
+  getData()
+    .then((posts) => {
+      const fragment = document.createDocumentFragment();
+      const pictures = document.querySelector('.pictures');
 
-  posts.forEach((post) => {
-    const pictureElement = postParser(post);
-    fragment.appendChild(pictureElement);
-  });
+      posts.forEach((post) => {
+        const pictureElement = postParser(post);
+        fragment.appendChild(pictureElement);
+      });
 
-  pictures.appendChild(fragment);
+      pictures.appendChild(fragment);
+    })
+    .catch((err) => {
+      displayMessage('internet-error');
+      throw new Error(`Ошибка при создании миниатюр: ${err}`);
+    });
 };
