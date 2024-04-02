@@ -1,4 +1,4 @@
-import {removeDocumentKeydownHandler} from '../postAdd/addPostForm';
+import {onSuccessfulSubmit, removeDocumentKeydownHandler} from '../postAdd/addPostForm';
 
 const successTemplate = document.querySelector('#success');
 const errorTemplate = document.querySelector('#error');
@@ -85,6 +85,7 @@ const displayMessage = (type) => {
     if (errorButton) {
       errorButton.removeEventListener('click', errorButtonClickListener, false);
     }
+    onSuccessfulSubmit();
   }
 
   document.body.appendChild(messageElement);
