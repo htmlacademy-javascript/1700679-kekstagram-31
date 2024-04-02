@@ -1,6 +1,6 @@
 import {createPristine, destroyPristine, setupFormSubmitHandler} from './sendValidate';
-import {effectChangeHandler, initEffectSlider} from './effects';
-import {handleScaleControlBiggerClick, handleScaleControlSmallerClick} from './scale';
+import {destroySlider, effectChangeHandler, initEffectSlider} from './effects';
+import { destroyScaleController, initScaleController } from './scale';
 
 const body = document.querySelector('body');
 const uploadForm = document.querySelector('.img-upload__form');
@@ -12,12 +12,6 @@ const effectPreview = photoEditorForm.querySelectorAll('.effects__preview');
 const previewImage = photoEditorForm.querySelector('.img-upload__preview img');
 const effectItems = photoEditorForm.querySelectorAll('.effects__radio');
 const effectLevel = photoEditorForm.querySelector('.effect-level');
-const effectLevelSlider = photoEditorForm.querySelector('.effect-level__slider');
-const effectLevelValue = photoEditorForm.querySelector('.effect-level__value');
-const scaleControl = photoEditorForm.querySelector('.scale__control--value');
-const scaleControlSmaller = photoEditorForm.querySelector('.scale__control--smaller');
-const scaleControlBigger = photoEditorForm.querySelector('.scale__control--bigger');
-let scale = 100;
 
 
 const handleDocumentKeydown = (event) => {
@@ -34,10 +28,6 @@ const handleDocumentKeydown = (event) => {
 };
 
 export const uploadImage = () => {
-  const onSuccessfulSubmit = () => {
-    document.addEventListener('keydown', handleDocumentKeydown);
-  };
-
   uploadFileControl.addEventListener('change', () => {
     photoEditorForm.classList.remove('hidden');
     body.classList.add('modal-open');
@@ -48,9 +38,7 @@ export const uploadImage = () => {
     effectPreview.forEach((preview) => (preview.style.backgroundImage = `url(${previewImage.src})`));
 
     initEffectSlider();
-
-    scaleControlSmaller.addEventListener('click', handleScaleControlSmallerClick);
-    scaleControlBigger.addEventListener('click', handleScaleControlBiggerClick);
+    initScaleController();
 
     effectLevel.classList.add('hidden');
     effectItems.forEach((item) => {
@@ -68,43 +56,43 @@ export const uploadImage = () => {
     event.effectLevel = effectLevel.value;
     event.scale = photoEditorForm.querySelector('.scale__control--value').value;
     event.preventDefault();
-    await setupFormSubmitHandler(event, onSuccessfulSubmit);
+    await setupFormSubmitHandler(event);
   });
+};
+
+export const onSuccessfulSubmit = () => {
+  document.addEventListener('keydown', handleDocumentKeydown);
+};
+
+export const removeDocumentKeydownHandler = ()=> {
+  document.removeEventListener('keydown', handleDocumentKeydown);
 };
 
 export function closeEditor() {
   photoEditorForm.classList.add('hidden');
   body.classList.remove('modal-open');
   uploadForm.removeEventListener('submit', setupFormSubmitHandler);
-  scale = 100;
-  previewImage.style.transform = `scale(${scale / 100})`;
-  scaleControl.value = `${scale}%`;
-  effectLevelValue.value = 100;
-  effectLevelSlider.noUiSlider.set(100);
-  effectLevelSlider.noUiSlider.off('update');
-  effectLevelSlider.noUiSlider.destroy();
+
+  destroyScaleController();
+  destroySlider();
+
   effectItems.forEach((item) => {
     item.checked = item.value === 'none';
   });
+
   previewImage.style.filter = '';
   previewImage.className = '';
   previewImage.classList.add('effects__preview--none');
   effectLevel.classList.add('hidden');
   effectItems.forEach((item) => item.removeEventListener('change', effectChangeHandler));
 
-  scaleControlSmaller.removeEventListener('click', handleScaleControlSmallerClick);
-  scaleControlBigger.removeEventListener('click', handleScaleControlBiggerClick);
-
   photoEditorResetBtn.removeEventListener('click', onPhotoEditorResetBtnClick);
   uploadFileControl.value = '';
   textInputs.forEach((input) => (input.value = ''));
   document.removeEventListener('keydown', handleDocumentKeydown);
   uploadForm.reset();
-  destroyPristine();
-}
 
-export function removeDocumentKeydownHandler () {
-  document.removeEventListener('keydown', handleDocumentKeydown);
+  destroyPristine();
 }
 
 function onPhotoEditorResetBtnClick() {
