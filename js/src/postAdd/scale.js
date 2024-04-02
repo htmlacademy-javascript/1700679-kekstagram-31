@@ -18,7 +18,7 @@ const destroyScaleController = () => {
   scaleControl.value = `${scale}%`;
   scaleControlSmaller.removeEventListener('click', handleScaleControlSmallerClick);
   scaleControlBigger.removeEventListener('click', handleScaleControlBiggerClick);
-}
+};
 
 function handleScaleControlSmallerClick() {
   scale -= 25;
