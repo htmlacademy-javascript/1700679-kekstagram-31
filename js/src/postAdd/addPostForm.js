@@ -1,6 +1,8 @@
-import {createPristine, destroyPristine, setupFormSubmitHandler} from './sendValidate';
-import {destroySlider, effectChangeHandler, initEffectSlider} from './effects';
+import { createPristine, destroyPristine, setupFormSubmitHandler } from './sendValidate';
+import { destroySlider, effectChangeHandler, initEffectSlider } from './effects';
 import { destroyScaleController, initScaleController } from './scale';
+import { sendData } from '../api/api';
+import displayMessage from '../api/displayMessage';
 
 const body = document.querySelector('body');
 const uploadForm = document.querySelector('.img-upload__form');
@@ -12,7 +14,12 @@ const effectPreview = photoEditorForm.querySelectorAll('.effects__preview');
 const previewImage = photoEditorForm.querySelector('.img-upload__preview img');
 const effectItems = photoEditorForm.querySelectorAll('.effects__radio');
 const effectLevel = photoEditorForm.querySelector('.effect-level');
+const submitButton = uploadForm.querySelector('.img-upload__submit');
+const modal = document.querySelector('.img-upload__overlay');
 
+const onPhotoEditorResetBtnClick = () => {
+  closeEditor().then();
+};
 
 const handleDocumentKeydown = (event) => {
   if (event.key === 'Escape') {
@@ -21,14 +28,14 @@ const handleDocumentKeydown = (event) => {
 
     if (isFocusedOnTextInput) {
       event.stopPropagation();
-    } else{
-      closeEditor();
+    } else {
+      closeEditor().then();
     }
   }
 };
 
-export const uploadImage = () => {
-  uploadFileControl.addEventListener('change', () => {
+const uploadImage = () => {
+  const onFileChange = () => {
     photoEditorForm.classList.remove('hidden');
     body.classList.add('modal-open');
 
@@ -48,27 +55,42 @@ export const uploadImage = () => {
     photoEditorResetBtn.addEventListener('click', onPhotoEditorResetBtnClick);
     document.removeEventListener('keydown', handleDocumentKeydown);
     document.addEventListener('keydown', handleDocumentKeydown);
+  };
 
-  });
-
-  uploadForm.addEventListener('submit', async (event) => {
+  const onFormSubmit = async (event) => {
     event.effect = document.querySelector('input[name="effect"]:checked').value;
     event.effectLevel = effectLevel.value;
     event.scale = photoEditorForm.querySelector('.scale__control--value').value;
     event.preventDefault();
     await setupFormSubmitHandler(event);
-  });
+  };
+
+  uploadFileControl.addEventListener('change', onFileChange);
+  uploadForm.addEventListener('submit', onFormSubmit);
 };
 
-export const onSuccessfulSubmit = () => {
-  document.addEventListener('keydown', handleDocumentKeydown);
-};
-
-export const removeDocumentKeydownHandler = ()=> {
+const sendImage = async (post) => {
+  let closed = false;
   document.removeEventListener('keydown', handleDocumentKeydown);
+  if (post.checkValidity()) {
+    submitButton.disabled = true;
+    try {
+      await sendData(new FormData(post));
+      closed = await displayMessage('success');
+      modal.classList.remove('show');
+      post.reset();
+    } catch (err) {
+      closed = await displayMessage('internet-error');
+    } finally {
+      submitButton.disabled = false;
+    }
+  }
+  if (closed) {
+    document.addEventListener('keydown', handleDocumentKeydown);
+  }
 };
 
-export function closeEditor() {
+async function closeEditor() {
   photoEditorForm.classList.add('hidden');
   body.classList.remove('modal-open');
   uploadForm.removeEventListener('submit', setupFormSubmitHandler);
@@ -95,6 +117,4 @@ export function closeEditor() {
   destroyPristine();
 }
 
-function onPhotoEditorResetBtnClick() {
-  closeEditor();
-}
+export { uploadImage, sendImage, closeEditor };
