@@ -1,20 +1,44 @@
-import {onSuccessfulSubmit, removeDocumentKeydownHandler} from '../postAdd/addPostForm';
-
 const successTemplate = document.querySelector('#success');
 const errorTemplate = document.querySelector('#error');
-const internetErrorTemplate = document.querySelector('#data-error');
 const uploadImageForm = document.querySelector('.img-upload__form');
 const descriptions = uploadImageForm.querySelector('.text__description');
-let successButton;
-let errorButton;
-let successButtonClickListener;
-let errorButtonClickListener;
-
 const displayMessage = (type) => {
-  removeDocumentKeydownHandler();
+  let formClosed = false;
+  let successButton;
+  let errorButton;
+  let successButtonClickListener;
+  let errorButtonClickListener;
   let template;
   let messageElement;
   let inner;
+
+  let cleanUpEventListenersMessage = () => {
+    document.removeEventListener('keydown', handleEscKeydown, false);
+    document.removeEventListener('click', handleOutsideClick, false);
+    if (successButton) {
+      successButton.removeEventListener('click', successButtonClickListener, false);
+    }
+    if (errorButton) {
+      errorButton.removeEventListener('click', errorButtonClickListener, false);
+    }
+    formClosed = true;
+  };
+
+  function handleOutsideClick (event) {
+    if (!inner.contains(event.target)) {
+      messageElement.remove();
+      document.removeEventListener('click', handleOutsideClick);
+      cleanUpEventListenersMessage();
+    }
+  }
+
+  function handleEscKeydown(event){
+    if (event.key === 'Escape' && !descriptions.contains(document.activeElement)) {
+      messageElement.remove();
+      document.removeEventListener('keydown', handleEscKeydown);
+      cleanUpEventListenersMessage();
+    }
+  }
 
 
   if (type === 'success') {
@@ -27,7 +51,7 @@ const displayMessage = (type) => {
       successButtonClickListener = () => {
         successButton.removeEventListener('click', successButtonClickListener);
         messageElement.remove();
-        cleanUpEventListeners();
+        cleanUpEventListenersMessage();
       };
       successButton.addEventListener('click', successButtonClickListener);
     }
@@ -44,53 +68,31 @@ const displayMessage = (type) => {
       errorButtonClickListener = () => {
         messageElement.remove();
         errorButton.removeEventListener('click', errorButtonClickListener);
-        cleanUpEventListeners();
+        cleanUpEventListenersMessage();
       };
       errorButton.addEventListener('click', errorButtonClickListener);
     }
 
     document.addEventListener('keydown', handleEscKeydown);
     document.addEventListener('click', handleOutsideClick);
-  } else if (type === 'error') {
-    template = internetErrorTemplate;
-    messageElement = template.content.cloneNode(true).firstElementChild;
-    setTimeout(() => {
-      messageElement.remove();
-      cleanUpEventListeners();
-    }, 5000);
-  }
-
-  function handleEscKeydown(event) {
-    if (event.key === 'Escape' && !descriptions.contains(document.activeElement)) {
-      messageElement.remove();
-      document.removeEventListener('keydown', handleEscKeydown);
-      cleanUpEventListeners();
-    }
-  }
-
-  function handleOutsideClick(event) {
-    if (!inner.contains(event.target)) {
-      messageElement.remove();
-      document.removeEventListener('click', handleOutsideClick);
-      cleanUpEventListeners();
-    }
-  }
-
-  function cleanUpEventListeners() {
-    document.removeEventListener('keydown', handleEscKeydown, false);
-    document.removeEventListener('click', handleOutsideClick, false);
-    if (successButton) {
-      successButton.removeEventListener('click', successButtonClickListener, false);
-    }
-    if (errorButton) {
-      errorButton.removeEventListener('click', errorButtonClickListener, false);
-    }
-    onSuccessfulSubmit();
   }
 
   document.body.appendChild(messageElement);
-  return messageElement;
-};
 
+  return new Promise((resolve) => { // Чтобы не наслаивались слушатели на ESCAPE пока форма открыта
+    cleanUpEventListenersMessage = () => {
+      document.removeEventListener('keydown', handleEscKeydown, false);
+      document.removeEventListener('click', handleOutsideClick, false);
+      if (successButton) {
+        successButton.removeEventListener('click', successButtonClickListener, false);
+      }
+      if (errorButton) {
+        errorButton.removeEventListener('click', errorButtonClickListener, false);
+      }
+      formClosed = true;
+      resolve(formClosed);
+    };
+  });
+};
 
 export default displayMessage;
