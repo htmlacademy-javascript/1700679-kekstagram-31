@@ -1,10 +1,6 @@
-import { closeEditor } from './addPostForm';
-import displayMessage from '../api/displayMessage';
-import { sendData } from '../api/api';
+import {sendImage} from './addPostForm';
 
 const uploadImageForm = document.querySelector('.img-upload__form');
-const submitButton = uploadImageForm.querySelector('.img-upload__submit');
-const modal = document.querySelector('.img-upload__overlay');
 const MAX_COMMENT_LENGTH = 140;
 const MAX_HASHTAG_COUNT = 5;
 const MAX_HASHTAG_LENGTH = 20;
@@ -12,6 +8,7 @@ const ERROR_MESSAGE_FOR_COMMENTS = 'Длина комментария больш
 let formSubmitHandler = null;
 const hashtags = uploadImageForm.querySelector('.text__hashtags');
 const descriptions = uploadImageForm.querySelector('.text__description');
+const internetErrorTemplate = document.querySelector('#data-error');
 
 let errorMessage = '';
 
@@ -95,32 +92,18 @@ export const createPristine = (form) => {
   }
 };
 
-const sendImage = async (post) => {
-  if (post.checkValidity()) {
-    submitButton.disabled = true;
-    try {
-      await sendData(new FormData(post));
-      displayMessage('success');
-      modal.classList.remove('show');
-      closeEditor();
-      post.reset();
-    } catch (err) {
-      displayMessage('internet-error');
-    } finally {
-      submitButton.disabled = false;
-    }
-  }
-};
-
 const formSubmit = async (event) => {
   event.preventDefault();
-
   const isValid = pristineConfig.validate();
 
   if (isValid) {
     await sendImage(event.target);
   } else {
-    displayMessage('error');
+    const template = internetErrorTemplate.content.cloneNode(true).firstElementChild;
+    document.body.appendChild(template);
+    setTimeout(() => {
+      template.remove();
+    }, 5000);
   }
 };
 
