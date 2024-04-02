@@ -102,23 +102,23 @@ const sendImage = async (post) => {
       await sendData(new FormData(post));
       displayMessage('success');
       modal.classList.remove('show');
-      closeEditor(true);
+      closeEditor();
       post.reset();
     } catch (err) {
       displayMessage('internet-error');
+    } finally {
+      submitButton.disabled = false;
     }
-    submitButton.disabled = false;
   }
 };
 
-const formSubmit = async (event, onSuccessfulSubmit) => {
+const formSubmit = async (event) => {
   event.preventDefault();
 
   const isValid = pristineConfig.validate();
 
   if (isValid) {
     await sendImage(event.target);
-    onSuccessfulSubmit();
   } else {
     displayMessage('error');
   }
