@@ -15,7 +15,6 @@ const descriptions = uploadImageForm.querySelector('.text__description');
 
 let errorMessage = '';
 
-
 const error = () => errorMessage;
 
 const isHashtagsValid = (value) => {
@@ -79,6 +78,7 @@ export const destroyPristine = () => {
     pristineConfig = null;
   }
 };
+
 export const createPristine = (form) => {
   if (!pristineConfig){
     pristineConfig = new Pristine(form, {
@@ -106,7 +106,6 @@ const sendImage = async (post) => {
       post.reset();
     } catch (err) {
       displayMessage('internet-error');
-      throw new Error(`Ошибка при отправке: ${err}`);
     }
     submitButton.disabled = false;
   }
@@ -121,7 +120,7 @@ const formSubmit = async (event, onSuccessfulSubmit) => {
     await sendImage(event.target);
     onSuccessfulSubmit();
   } else {
-    displayMessage('validate-error');
+    displayMessage('error');
   }
 };
 

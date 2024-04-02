@@ -1,6 +1,4 @@
 import { showBigPicture } from './bigPicture.js';
-import { getData } from '../api/api';
-import displayMessage from '../api/displayMessage';
 let clickHandler = null;
 const pictureTemplate = document.querySelector('#picture')
   .content.querySelector('.picture');
@@ -25,21 +23,13 @@ const postParser = (post) => {
   return pictureElement;
 };
 
-export const createThumbnails = () => {
-  getData()
-    .then((posts) => {
-      const fragment = document.createDocumentFragment();
-      const pictures = document.querySelector('.pictures');
+export const createThumbnails = (posts) => {
+  const fragment = document.createDocumentFragment();
+  const pictures = document.querySelector('.pictures');
+  posts.forEach((post) => {
+    const pictureElement = postParser(post);
+    fragment.appendChild(pictureElement);
+  });
 
-      posts.forEach((post) => {
-        const pictureElement = postParser(post);
-        fragment.appendChild(pictureElement);
-      });
-
-      pictures.appendChild(fragment);
-    })
-    .catch((err) => {
-      displayMessage('internet-error');
-      throw new Error(`Ошибка при создании миниатюр: ${err}`);
-    });
+  pictures.appendChild(fragment);
 };

@@ -58,7 +58,9 @@ export const uploadImage = () => {
     });
 
     photoEditorResetBtn.addEventListener('click', onPhotoEditorResetBtnClick);
+    document.removeEventListener('keydown', handleDocumentKeydown);
     document.addEventListener('keydown', handleDocumentKeydown);
+
   });
 
   uploadForm.addEventListener('submit', async (event) => {
@@ -70,7 +72,7 @@ export const uploadImage = () => {
   });
 };
 
-export function closeEditor(isSuccessfulSubmit = false) {
+export function closeEditor() {
   photoEditorForm.classList.add('hidden');
   body.classList.remove('modal-open');
   uploadForm.removeEventListener('submit', setupFormSubmitHandler);
@@ -93,10 +95,6 @@ export function closeEditor(isSuccessfulSubmit = false) {
   scaleControlSmaller.removeEventListener('click', handleScaleControlSmallerClick);
   scaleControlBigger.removeEventListener('click', handleScaleControlBiggerClick);
 
-  if (!isSuccessfulSubmit) {
-    document.removeEventListener('keydown', handleDocumentKeydown);
-  }
-
   photoEditorResetBtn.removeEventListener('click', onPhotoEditorResetBtnClick);
   uploadFileControl.value = '';
   textInputs.forEach((input) => (input.value = ''));
@@ -105,6 +103,9 @@ export function closeEditor(isSuccessfulSubmit = false) {
   destroyPristine();
 }
 
+export function removeDocumentKeydownHandler () {
+  document.removeEventListener('keydown', handleDocumentKeydown);
+}
 
 function onPhotoEditorResetBtnClick() {
   closeEditor();

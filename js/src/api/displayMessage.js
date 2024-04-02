@@ -1,3 +1,5 @@
+import {removeDocumentKeydownHandler} from '../postAdd/addPostForm';
+
 const successTemplate = document.querySelector('#success');
 const errorTemplate = document.querySelector('#error');
 const internetErrorTemplate = document.querySelector('#data-error');
@@ -9,13 +11,16 @@ let successButtonClickListener;
 let errorButtonClickListener;
 
 const displayMessage = (type) => {
+  removeDocumentKeydownHandler();
   let template;
   let messageElement;
+  let inner;
+
 
   if (type === 'success') {
     template = successTemplate;
     messageElement = template.content.cloneNode(true).firstElementChild;
-
+    inner = messageElement.querySelector('.success__inner');
     successButton = messageElement.querySelector('.success__button');
 
     if (successButton) {
@@ -29,10 +34,11 @@ const displayMessage = (type) => {
 
     document.addEventListener('keydown', handleEscKeydown);
     document.addEventListener('click', handleOutsideClick);
-  } else if (type === 'error') {
+  } else if (type === 'internet-error') {
     template = errorTemplate;
-    messageElement = template.content.cloneNode(true).firstElementChild;
 
+    messageElement = template.content.cloneNode(true).firstElementChild;
+    inner = messageElement.querySelector('.error__inner');
     errorButton = messageElement.querySelector('.error__button');
     if (errorButton) {
       errorButtonClickListener = () => {
@@ -45,7 +51,7 @@ const displayMessage = (type) => {
 
     document.addEventListener('keydown', handleEscKeydown);
     document.addEventListener('click', handleOutsideClick);
-  } else if (type === 'internet-error') {
+  } else if (type === 'error') {
     template = internetErrorTemplate;
     messageElement = template.content.cloneNode(true).firstElementChild;
     setTimeout(() => {
@@ -63,8 +69,7 @@ const displayMessage = (type) => {
   }
 
   function handleOutsideClick(event) {
-    const successInner = messageElement.querySelector('.success__inner');
-    if (!successInner.contains(event.target)) {
+    if (!inner.contains(event.target)) {
       messageElement.remove();
       document.removeEventListener('click', handleOutsideClick);
       cleanUpEventListeners();
@@ -85,5 +90,6 @@ const displayMessage = (type) => {
   document.body.appendChild(messageElement);
   return messageElement;
 };
+
 
 export default displayMessage;
