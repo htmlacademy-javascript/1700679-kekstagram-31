@@ -4,10 +4,9 @@ const previewImage = photoEditorForm.querySelector('.img-upload__preview img');
 const effectLevel = photoEditorForm.querySelector('.effect-level');
 const effectLevelValue = photoEditorForm.querySelector('.effect-level__value');
 
-
 let effectLevelSlider;
 
-function initEffectSlider() {
+const initEffectSlider = () => {
   effectLevelSlider = document.querySelector('.effect-level__slider');
 
   noUiSlider.create(effectLevelSlider, {
@@ -48,9 +47,9 @@ function initEffectSlider() {
       previewImage.style.filter = '';
     }
   });
-}
+};
 
-function effectChangeHandler(event) {
+const effectChangeHandler = (event) => {
   previewImage.className = '';
   previewImage.classList.add(`effects__preview--${event.target.value}`);
 
@@ -111,6 +110,13 @@ function effectChangeHandler(event) {
       step: 1,
     });
   }
-}
+};
 
-export { initEffectSlider, effectChangeHandler };
+const destroySlider = () => {
+  effectLevelValue.value = 100;
+  effectLevelSlider.noUiSlider.set(100);
+  effectLevelSlider.noUiSlider.off('update');
+  effectLevelSlider.noUiSlider.destroy();
+};
+
+export { initEffectSlider, effectChangeHandler, destroySlider };
