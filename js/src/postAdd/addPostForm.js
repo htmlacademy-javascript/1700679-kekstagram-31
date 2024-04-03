@@ -15,7 +15,7 @@ const previewImage = photoEditorForm.querySelector('.img-upload__preview img');
 const effectItems = photoEditorForm.querySelectorAll('.effects__radio');
 const effectLevel = photoEditorForm.querySelector('.effect-level');
 const submitButton = uploadForm.querySelector('.img-upload__submit');
-const modal = document.querySelector('.img-upload__overlay');
+
 let messageElement = null;
 let messageButton = null;
 let inner = null;
@@ -112,12 +112,11 @@ const sendImage = async (post) => {
     try {
       await sendData(new FormData(post));
       displayMessage('success');
-      modal.classList.remove('show');
-      post.reset();
     } catch (err) {
       displayMessage('error');
     } finally {
       submitButton.disabled = false;
+      post.reset();
     }
   }
 };
@@ -143,7 +142,7 @@ function closeEditor() {
   photoEditorResetBtn.removeEventListener('click', onPhotoEditorResetBtnClick);
   uploadFileControl.value = '';
   textInputs.forEach((input) => (input.value = ''));
-  document.removeEventListener('keydown', handleDocumentKeydown); // Удаляем обработчик при закрытии формы
+  document.removeEventListener('keydown', handleDocumentKeydown);
   uploadForm.reset();
 
   destroyPristine();
