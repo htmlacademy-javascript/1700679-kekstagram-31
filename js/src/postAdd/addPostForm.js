@@ -2,7 +2,7 @@ import { createPristine, destroyPristine, setupFormSubmitHandler } from './sendV
 import { destroySlider, effectChangeHandler, initEffectSlider } from './effects';
 import { destroyScaleController, initScaleController } from './scale';
 import { sendData } from '../api/api';
-import displayMessage from '../api/displayMessage';
+
 
 const body = document.querySelector('body');
 const uploadForm = document.querySelector('.img-upload__form');
@@ -16,22 +16,60 @@ const effectItems = photoEditorForm.querySelectorAll('.effects__radio');
 const effectLevel = photoEditorForm.querySelector('.effect-level');
 const submitButton = uploadForm.querySelector('.img-upload__submit');
 const modal = document.querySelector('.img-upload__overlay');
+let messageElement = null;
+let messageButton = null;
+let inner = null;
 
-const onPhotoEditorResetBtnClick = () => {
-  closeEditor().then();
+const onMessageButtonClick = () => {
+  if (messageElement) {
+    messageElement.remove();
+    messageButton.removeEventListener('click', onMessageButtonClick);
+    document.removeEventListener('click', handleOutsideClick);
+  }
 };
 
-const handleDocumentKeydown = (event) => {
+function handleOutsideClick (event) {
+  if (!inner.contains(event.target)) {
+    messageElement.remove();
+    document.removeEventListener('click', handleOutsideClick);
+  }
+}
+
+const displayMessage = (type) => {
+  const messageTemplate = document.querySelector(`#${type}`).content.cloneNode(true);
+  messageElement = messageTemplate.querySelector(`.${type}`);
+  messageButton = messageTemplate.querySelector(`.${type}__button`);
+  inner = messageElement.querySelector(`.${type}__inner`);
+
+  document.body.appendChild(messageElement);
+
+  messageButton.addEventListener('click', onMessageButtonClick);
+  document.addEventListener('click', handleOutsideClick);
+  document.addEventListener('keydown', handleDocumentKeydown);
+};
+
+function handleDocumentKeydown(event) {
   if (event.key === 'Escape') {
     event.preventDefault();
     const isFocusedOnTextInput = textInputs.some((input) => input === document.activeElement);
 
-    if (isFocusedOnTextInput) {
-      event.stopPropagation();
+    if (messageElement) {
+      messageButton.removeEventListener('click', onMessageButtonClick);
+      document.removeEventListener('click', handleOutsideClick);
+      messageElement.remove();
+      messageElement = null;
     } else {
-      closeEditor().then();
+      if (isFocusedOnTextInput) {
+        event.stopPropagation();
+      } else {
+        closeEditor();
+      }
     }
   }
+}
+
+const onPhotoEditorResetBtnClick = () => {
+  closeEditor();
 };
 
 const uploadImage = () => {
@@ -53,7 +91,6 @@ const uploadImage = () => {
     });
 
     photoEditorResetBtn.addEventListener('click', onPhotoEditorResetBtnClick);
-    document.removeEventListener('keydown', handleDocumentKeydown);
     document.addEventListener('keydown', handleDocumentKeydown);
   };
 
@@ -70,27 +107,22 @@ const uploadImage = () => {
 };
 
 const sendImage = async (post) => {
-  let closed = false;
-  document.removeEventListener('keydown', handleDocumentKeydown);
   if (post.checkValidity()) {
     submitButton.disabled = true;
     try {
       await sendData(new FormData(post));
-      closed = await displayMessage('success');
+      displayMessage('success');
       modal.classList.remove('show');
       post.reset();
     } catch (err) {
-      closed = await displayMessage('internet-error');
+      displayMessage('error');
     } finally {
       submitButton.disabled = false;
     }
   }
-  if (closed) {
-    document.addEventListener('keydown', handleDocumentKeydown);
-  }
 };
 
-async function closeEditor() {
+function closeEditor() {
   photoEditorForm.classList.add('hidden');
   body.classList.remove('modal-open');
   uploadForm.removeEventListener('submit', setupFormSubmitHandler);
@@ -111,10 +143,10 @@ async function closeEditor() {
   photoEditorResetBtn.removeEventListener('click', onPhotoEditorResetBtnClick);
   uploadFileControl.value = '';
   textInputs.forEach((input) => (input.value = ''));
-  document.removeEventListener('keydown', handleDocumentKeydown);
+  document.removeEventListener('keydown', handleDocumentKeydown); // Удаляем обработчик при закрытии формы
   uploadForm.reset();
 
   destroyPristine();
 }
 
-export { uploadImage, sendImage, closeEditor };
+export { uploadImage, sendImage, closeEditor};
