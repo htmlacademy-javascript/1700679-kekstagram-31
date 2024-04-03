@@ -1,14 +1,13 @@
 import {sendImage} from './addPostForm';
+import {dataError} from '../api/messages';
 
 const uploadImageForm = document.querySelector('.img-upload__form');
 const MAX_COMMENT_LENGTH = 140;
 const MAX_HASHTAG_COUNT = 5;
 const MAX_HASHTAG_LENGTH = 20;
 const ERROR_MESSAGE_FOR_COMMENTS = 'Длина комментария больше 140 символов.';
-let formSubmitHandler = null;
 const hashtags = uploadImageForm.querySelector('.text__hashtags');
 const descriptions = uploadImageForm.querySelector('.text__description');
-const internetErrorTemplate = document.querySelector('#data-error');
 
 let errorMessage = '';
 
@@ -92,26 +91,13 @@ export const createPristine = (form) => {
   }
 };
 
-const formSubmit = async (event) => {
+export const formSubmit = async (event) => {
   event.preventDefault();
   const isValid = pristineConfig.validate();
 
   if (isValid) {
     await sendImage(event.target);
   } else {
-    const template = internetErrorTemplate.content.cloneNode(true).firstElementChild;
-    document.body.appendChild(template);
-    setTimeout(() => {
-      template.remove();
-    }, 5000);
+    dataError();
   }
-};
-
-export const setupFormSubmitHandler = (event, submit) => {
-  if (formSubmitHandler) {
-    uploadImageForm.removeEventListener('submit', formSubmitHandler);
-  }
-
-  formSubmitHandler = formSubmit(event, submit);
-  uploadImageForm.addEventListener('submit', formSubmitHandler);
 };

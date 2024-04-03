@@ -1,8 +1,8 @@
-import { createPristine, destroyPristine, setupFormSubmitHandler } from './sendValidate';
+import {createPristine, destroyPristine, formSubmit} from './sendValidate';
 import { destroySlider, effectChangeHandler, initEffectSlider } from './effects';
 import { destroyScaleController, initScaleController } from './scale';
 import { sendData } from '../api/api';
-
+import { displayMessageWithHandlers, messageElementState} from '../api/messages';
 
 const body = document.querySelector('body');
 const uploadForm = document.querySelector('.img-upload__form');
@@ -16,49 +16,11 @@ const effectItems = photoEditorForm.querySelectorAll('.effects__radio');
 const effectLevel = photoEditorForm.querySelector('.effect-level');
 const submitButton = uploadForm.querySelector('.img-upload__submit');
 
-let messageElement = null;
-let messageButton = null;
-let inner = null;
-
-const onMessageButtonClick = () => {
-  if (messageElement) {
-    messageElement.remove();
-    messageButton.removeEventListener('click', onMessageButtonClick);
-    document.removeEventListener('click', handleOutsideClick);
-  }
-};
-
-function handleOutsideClick (event) {
-  if (!inner.contains(event.target)) {
-    messageElement.remove();
-    document.removeEventListener('click', handleOutsideClick);
-  }
-}
-
-const displayMessage = (type) => {
-  const messageTemplate = document.querySelector(`#${type}`).content.cloneNode(true);
-  messageElement = messageTemplate.querySelector(`.${type}`);
-  messageButton = messageTemplate.querySelector(`.${type}__button`);
-  inner = messageElement.querySelector(`.${type}__inner`);
-
-  document.body.appendChild(messageElement);
-
-  messageButton.addEventListener('click', onMessageButtonClick);
-  document.addEventListener('click', handleOutsideClick);
-  document.addEventListener('keydown', handleDocumentKeydown);
-};
-
-function handleDocumentKeydown(event) {
+export function handleDocumentKeydown(event) {
   if (event.key === 'Escape') {
     event.preventDefault();
     const isFocusedOnTextInput = textInputs.some((input) => input === document.activeElement);
-
-    if (messageElement) {
-      messageButton.removeEventListener('click', onMessageButtonClick);
-      document.removeEventListener('click', handleOutsideClick);
-      messageElement.remove();
-      messageElement = null;
-    } else {
+    if (!messageElementState) {
       if (isFocusedOnTextInput) {
         event.stopPropagation();
       } else {
@@ -89,7 +51,7 @@ const uploadImage = () => {
     effectItems.forEach((item) => {
       item.addEventListener('change', effectChangeHandler);
     });
-
+    uploadForm.addEventListener('submit', formSubmit);
     photoEditorResetBtn.addEventListener('click', onPhotoEditorResetBtnClick);
     document.addEventListener('keydown', handleDocumentKeydown);
   };
@@ -99,7 +61,7 @@ const uploadImage = () => {
     event.effectLevel = effectLevel.value;
     event.scale = photoEditorForm.querySelector('.scale__control--value').value;
     event.preventDefault();
-    await setupFormSubmitHandler(event);
+
   };
 
   uploadFileControl.addEventListener('change', onFileChange);
@@ -111,12 +73,11 @@ const sendImage = async (post) => {
     submitButton.disabled = true;
     try {
       await sendData(new FormData(post));
-      displayMessage('success');
+      displayMessageWithHandlers('success');
     } catch (err) {
-      displayMessage('error');
+      displayMessageWithHandlers('error');
     } finally {
       submitButton.disabled = false;
-      post.reset();
     }
   }
 };
@@ -124,7 +85,7 @@ const sendImage = async (post) => {
 function closeEditor() {
   photoEditorForm.classList.add('hidden');
   body.classList.remove('modal-open');
-  uploadForm.removeEventListener('submit', setupFormSubmitHandler);
+  uploadForm.removeEventListener('submit', formSubmit);
 
   destroyScaleController();
   destroySlider();
