@@ -46,10 +46,11 @@ function handleDocumentKeydown(event) {
   }
 }
 
-export const dataError = () => {
-  const template = internetErrorTemplate.content.cloneNode(true).firstElementChild;
-  document.body.appendChild(template);
+export const timedMessage = (type, time) => {
+  const messageTemplate = document.querySelector(`#${type}`).content.cloneNode(true);
+  const messageElement = messageTemplate.querySelector(`.${type}`);
+  document.body.appendChild(messageElement);
   setTimeout(() => {
-    template.remove();
-  }, 5000);
+    messageElement.remove();
+  }, time);
 };

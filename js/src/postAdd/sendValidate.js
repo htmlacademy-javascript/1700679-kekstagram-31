@@ -1,5 +1,5 @@
 import {sendImage} from './addPostForm';
-import {dataError} from '../api/messages';
+import {timedMessage} from '../api/messages';
 
 const uploadImageForm = document.querySelector('.img-upload__form');
 const MAX_COMMENT_LENGTH = 140;
@@ -98,6 +98,6 @@ export const formSubmit = async (event) => {
   if (isValid) {
     await sendImage(event.target);
   } else {
-    dataError();
+    timedMessage('data-error', 5000);
   }
 };
