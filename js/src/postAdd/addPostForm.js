@@ -36,6 +36,8 @@ const onPhotoEditorResetBtnClick = () => {
 
 const uploadImage = () => {
   const onFileChange = () => {
+    destroySlider();
+
     photoEditorForm.classList.remove('hidden');
     body.classList.add('modal-open');
 
