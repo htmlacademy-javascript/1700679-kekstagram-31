@@ -1,6 +1,8 @@
-import formSubmit, {createPristine, destroyPristine} from './sendValidate';
-import { initEffectSlider, effectChangeHandler } from './effects';
-import { handleScaleControlSmallerClick, handleScaleControlBiggerClick } from './scale';
+import {createPristine, destroyPristine, formSubmit} from './sendValidate';
+import { destroySlider, effectChangeHandler, initEffectSlider } from './effects';
+import { destroyScaleController, initScaleController } from './scale';
+import { sendData } from '../api/api';
+import { displayMessageWithHandlers, messageElementState} from '../api/messages';
 
 const body = document.querySelector('body');
 const uploadForm = document.querySelector('.img-upload__form');
@@ -12,33 +14,28 @@ const effectPreview = photoEditorForm.querySelectorAll('.effects__preview');
 const previewImage = photoEditorForm.querySelector('.img-upload__preview img');
 const effectItems = photoEditorForm.querySelectorAll('.effects__radio');
 const effectLevel = photoEditorForm.querySelector('.effect-level');
-const effectLevelSlider = photoEditorForm.querySelector('.effect-level__slider');
-const effectLevelValue = photoEditorForm.querySelector('.effect-level__value');
-const scaleControl = photoEditorForm.querySelector('.scale__control--value');
-const scaleControlSmaller = photoEditorForm.querySelector('.scale__control--smaller');
-const scaleControlBigger = photoEditorForm.querySelector('.scale__control--bigger');
-let scale = 100;
+const submitButton = uploadForm.querySelector('.img-upload__submit');
 
-
-const handleDocumentKeydown = (event) => {
+export function handleDocumentKeydown(event) {
   if (event.key === 'Escape') {
     event.preventDefault();
     const isFocusedOnTextInput = textInputs.some((input) => input === document.activeElement);
-
-    if (isFocusedOnTextInput) {
-      event.stopPropagation();
-    } else{
-      closeEditor();
+    if (!messageElementState) {
+      if (isFocusedOnTextInput) {
+        event.stopPropagation();
+      } else {
+        closeEditor();
+      }
     }
   }
+}
+
+const onPhotoEditorResetBtnClick = () => {
+  closeEditor();
 };
 
-export const uploadImage = () => {
-  const onSuccessfulSubmit = () => {
-    document.addEventListener('keydown', handleDocumentKeydown);
-  };
-
-  uploadFileControl.addEventListener('change', () => {
+const uploadImage = () => {
+  const onFileChange = () => {
     photoEditorForm.classList.remove('hidden');
     body.classList.add('modal-open');
 
@@ -48,64 +45,68 @@ export const uploadImage = () => {
     effectPreview.forEach((preview) => (preview.style.backgroundImage = `url(${previewImage.src})`));
 
     initEffectSlider();
-
-    scaleControlSmaller.addEventListener('click', handleScaleControlSmallerClick);
-    scaleControlBigger.addEventListener('click', handleScaleControlBiggerClick);
+    initScaleController();
 
     effectLevel.classList.add('hidden');
     effectItems.forEach((item) => {
       item.addEventListener('change', effectChangeHandler);
     });
-
+    uploadForm.addEventListener('submit', formSubmit);
     photoEditorResetBtn.addEventListener('click', onPhotoEditorResetBtnClick);
     document.addEventListener('keydown', handleDocumentKeydown);
-  });
+  };
 
-  uploadForm.addEventListener('submit', async (event) => {
+  const onFormSubmit = async (event) => {
+    event.effect = document.querySelector('input[name="effect"]:checked').value;
+    event.effectLevel = effectLevel.value;
+    event.scale = photoEditorForm.querySelector('.scale__control--value').value;
     event.preventDefault();
-    await formSubmit(event, onSuccessfulSubmit);
-  });
+
+  };
+
+  uploadFileControl.addEventListener('change', onFileChange);
+  uploadForm.addEventListener('submit', onFormSubmit);
 };
 
-export function closeEditor(isSuccessfulSubmit = false) {
+const sendImage = async (post) => {
+  if (post.checkValidity()) {
+    submitButton.disabled = true;
+    try {
+      await sendData(new FormData(post));
+      displayMessageWithHandlers('success');
+    } catch (err) {
+      displayMessageWithHandlers('error');
+    } finally {
+      submitButton.disabled = false;
+    }
+  }
+};
+
+function closeEditor() {
   photoEditorForm.classList.add('hidden');
   body.classList.remove('modal-open');
   uploadForm.removeEventListener('submit', formSubmit);
-  scale = 100;
-  previewImage.style.transform = `scale(${scale / 100})`;
-  scaleControl.value = `${scale}%`;
-  effectLevelValue.value = 100;
-  effectLevelSlider.noUiSlider.set(100);
-  effectLevelSlider.noUiSlider.destroy();
+
+  destroyScaleController();
+  destroySlider();
+
   effectItems.forEach((item) => {
-    if (item.value === 'none') {
-      item.checked = true;
-    } else {
-      item.checked = false;
-    }
+    item.checked = item.value === 'none';
   });
+
   previewImage.style.filter = '';
   previewImage.className = '';
   previewImage.classList.add('effects__preview--none');
   effectLevel.classList.add('hidden');
   effectItems.forEach((item) => item.removeEventListener('change', effectChangeHandler));
 
-  scaleControlSmaller.removeEventListener('click', handleScaleControlSmallerClick);
-  scaleControlBigger.removeEventListener('click', handleScaleControlBiggerClick);
-
-  if (!isSuccessfulSubmit) {
-    document.removeEventListener('keydown', handleDocumentKeydown);
-  }
-
   photoEditorResetBtn.removeEventListener('click', onPhotoEditorResetBtnClick);
   uploadFileControl.value = '';
   textInputs.forEach((input) => (input.value = ''));
   document.removeEventListener('keydown', handleDocumentKeydown);
   uploadForm.reset();
+
   destroyPristine();
 }
 
-
-function onPhotoEditorResetBtnClick() {
-  closeEditor();
-}
+export { uploadImage, sendImage, closeEditor};
