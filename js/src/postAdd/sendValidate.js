@@ -8,6 +8,7 @@ const MAX_HASHTAG_LENGTH = 20;
 const ERROR_MESSAGE_FOR_COMMENTS = 'Длина комментария больше 140 символов.';
 const hashtags = uploadImageForm.querySelector('.text__hashtags');
 const descriptions = uploadImageForm.querySelector('.text__description');
+const ERROR_DELAY = 5000;
 
 let errorMessage = '';
 
@@ -98,6 +99,6 @@ export const formSubmit = async (event) => {
   if (isValid) {
     await sendImage(event.target);
   } else {
-    timedMessage('data-error', 5000);
+    timedMessage('data-error', ERROR_DELAY);
   }
 };

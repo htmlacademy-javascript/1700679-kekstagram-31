@@ -1,5 +1,3 @@
-const internetErrorTemplate = document.querySelector('#data-error');
-
 export let messageElementState = null;
 let messageButton = null;
 let inner = null;
