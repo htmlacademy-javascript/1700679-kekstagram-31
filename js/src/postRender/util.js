@@ -122,4 +122,13 @@ const generateImagePosts = (postsCount, maxCommentsCount) => {
   return result;
 };
 
-export {generateImagePosts};
+const debounce = (callback, delay) => {
+  let timerId;
+
+  return (...rest) => {
+    clearTimeout(timerId);
+    timerId = setTimeout(() => callback.apply(this, rest), delay);
+  };
+};
+
+export {generateImagePosts, generateRandomNumber, debounce};
