@@ -24,8 +24,13 @@ const postParser = (post) => {
 };
 
 export const createThumbnails = (posts) => {
+  if (!Array.isArray(posts)) {
+    throw new Error('Posts must be an array');
+  }
   const fragment = document.createDocumentFragment();
   const pictures = document.querySelector('.pictures');
+  const previewPictures = document.querySelectorAll('.picture');
+  previewPictures.forEach((picture) => picture.remove());
   posts.forEach((post) => {
     const pictureElement = postParser(post);
     fragment.appendChild(pictureElement);
