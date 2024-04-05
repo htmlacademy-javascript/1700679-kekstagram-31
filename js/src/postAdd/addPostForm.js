@@ -71,16 +71,14 @@ const uploadImage = () => {
 };
 
 const sendImage = async (post) => {
-  if (post.checkValidity()) {
-    submitButton.disabled = true;
-    try {
-      await sendData(new FormData(post));
-      displayMessageWithHandlers('success');
-    } catch (err) {
-      displayMessageWithHandlers('error');
-    } finally {
-      submitButton.disabled = false;
-    }
+  submitButton.disabled = true;
+  try {
+    await sendData(post);
+    displayMessageWithHandlers('success');
+  } catch (err) {
+    displayMessageWithHandlers('error');
+  } finally {
+    submitButton.disabled = false;
   }
 };
 

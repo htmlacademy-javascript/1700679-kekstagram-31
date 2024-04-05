@@ -96,8 +96,21 @@ export const formSubmit = async (event) => {
   event.preventDefault();
   const isValid = pristineConfig.validate();
 
-  if (isValid) {
-    await sendImage(event.target);
+  if (isValid && event.target.checkValidity()) {
+    const formData = new FormData(event.target);
+    const file = formData.get('filename');
+
+    if (!file) {
+      timedMessage('data-error', ERROR_DELAY);
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      timedMessage('data-error', ERROR_DELAY);
+      return;
+    }
+
+    await sendImage(formData);
   } else {
     timedMessage('data-error', ERROR_DELAY);
   }
