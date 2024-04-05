@@ -15,7 +15,7 @@ const shufflePosts = (posts) => {
   return posts.slice(0, 10);
 };
 
-const sortByComments = (posts) => posts.sort((a, b) => a.comments.length - b.comments.length);
+const sortByComments = (posts) => posts.sort((a, b) => a.comments.length <= b.comments.length);
 
 const applyFilter = (filterName, posts) => {
   let filteredPosts;
@@ -34,10 +34,10 @@ const applyFilter = (filterName, posts) => {
       throw new Error(`Filter ${filterName} does not exist`);
   }
 
-  createThumbnails(filteredPosts);
+  debounce(() => createThumbnails(filteredPosts), DELAY)();
 };
 
-const onFilterButtonClick = debounce((event, posts) => {
+const onFilterButtonClick = (event, posts) => {
   const currentActiveButton = document.querySelector('.img-filters__button--active');
   if (currentActiveButton) {
     currentActiveButton.classList.remove('img-filters__button--active');
@@ -45,9 +45,8 @@ const onFilterButtonClick = debounce((event, posts) => {
   event.target.classList.add('img-filters__button--active');
 
   currentFilter = event.target.id;
-
   applyFilter(currentFilter, posts);
-}, DELAY);
+};
 
 const initThumbnailsSorting = (posts) => {
   if (!Array.isArray(posts)) {
