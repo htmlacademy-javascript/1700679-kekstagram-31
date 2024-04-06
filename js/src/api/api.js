@@ -3,7 +3,7 @@ const routes = {GET_DATA: '/data', SEND_DATA: ''};
 const loadData = (route, method = 'GET', body = null) =>
   fetch(`${baseURL}${route}`, {method, body}).then((response) => {
     if(!response.ok) {
-      throw new Error('Проблемы с запроосом');
+      throw new Error('Problems with response');
     }
     return response.json();
   });

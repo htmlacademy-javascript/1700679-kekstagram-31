@@ -46,9 +46,9 @@ function handleDocumentKeydown(event) {
 
 export const timedMessage = (type, time) => {
   const messageTemplate = document.querySelector(`#${type}`).content.cloneNode(true);
-  const messageElement = messageTemplate.querySelector(`.${type}`);
-  document.body.appendChild(messageElement);
+  messageElementState = messageTemplate.querySelector(`.${type}`);
+  document.body.appendChild(messageElementState);
   setTimeout(() => {
-    messageElement.remove();
+    messageElementState.remove();
   }, time);
 };

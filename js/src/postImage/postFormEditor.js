@@ -1,4 +1,4 @@
-import {createPristine, destroyPristine, formSubmit} from './sendValidate';
+import {createPristine, destroyPristine, formSubmit} from './formValidation';
 import { destroySlider, effectChangeHandler, initEffectSlider } from './effects';
 import { destroyScaleController, initScaleController } from './scale';
 import { sendData } from '../api/api';

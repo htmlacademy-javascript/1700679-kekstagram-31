@@ -129,7 +129,6 @@ export const showBigPicture = (post) => {
     commentsLoader.removeEventListener('click', loadMoreCommentsHandler);
   }
 
-
   loadMoreCommentsHandler = loadMoreComments;
   commentsLoader.addEventListener('click', loadMoreCommentsHandler);
 

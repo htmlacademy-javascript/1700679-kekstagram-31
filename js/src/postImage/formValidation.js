@@ -1,4 +1,4 @@
-import {sendImage} from './addPostForm';
+import {sendImage} from './postFormEditor';
 import {timedMessage} from '../api/messages';
 
 const uploadImageForm = document.querySelector('.img-upload__form');
