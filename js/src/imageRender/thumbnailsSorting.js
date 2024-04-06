@@ -57,8 +57,6 @@ const initThumbnailsSorting = (posts) => {
   filterButtons.forEach((button) => {
     button.addEventListener('click', (event) => onFilterButtonClick(event, posts));
   });
-
-  applyFilter(currentFilter, initialPosts);
 };
 
 export default initThumbnailsSorting;
