@@ -68,7 +68,7 @@ const isHashtagsValid = (value) => {
 const isCommentValid = (value) => value.length <= MAX_COMMENT_LENGTH;
 let pristineConfig = null;
 
-export const destroyPristine = () => {
+const destroyPristine = () => {
   if (pristineConfig) {
     pristineConfig.reset();
     pristineConfig.destroy();
@@ -76,7 +76,7 @@ export const destroyPristine = () => {
   }
 };
 
-export const createPristine = (form) => {
+const createPristine = (form) => {
   if (!pristineConfig){
     pristineConfig = new Pristine(form, {
       classTo: 'img-upload__field-wrapper',
@@ -92,7 +92,7 @@ export const createPristine = (form) => {
   }
 };
 
-export const formSubmit = async (event) => {
+const formSubmit = async (event) => {
   event.preventDefault();
   const isValid = pristineConfig.validate();
 
@@ -115,3 +115,5 @@ export const formSubmit = async (event) => {
     timedMessage('data-error', ERROR_DELAY);
   }
 };
+
+export { formSubmit, createPristine, destroyPristine };

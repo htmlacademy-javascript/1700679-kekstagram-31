@@ -135,4 +135,4 @@ const showBigPicture = (post) => {
   setupCloseHandlers();
 };
 
-export default showBigPicture
+export default showBigPicture;

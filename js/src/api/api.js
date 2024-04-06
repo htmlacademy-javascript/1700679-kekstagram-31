@@ -12,4 +12,4 @@ const getData = async () => await loadData(routes.GET_DATA);
 
 const sendData = async (body) => await loadData(routes.SEND_DATA, 'POST', body);
 
-export {getData, sendData};
+export { getData, sendData };

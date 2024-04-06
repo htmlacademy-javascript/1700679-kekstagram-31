@@ -17,4 +17,4 @@ const debounce = (callback, delay) => {
   };
 };
 
-export {generateRandomNumber, debounce};
+export { generateRandomNumber, debounce };
