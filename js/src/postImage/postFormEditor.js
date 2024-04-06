@@ -1,8 +1,8 @@
 import {createPristine, destroyPristine, formSubmit} from './formValidation';
-import { destroySlider, effectChangeHandler, initEffectSlider } from './effects';
-import { destroyScaleController, initScaleController } from './scale';
-import { sendData } from '../api/api';
-import { displayMessageWithHandlers, messageElementState} from '../api/messages';
+import {destroySlider, effectChangeHandler, initEffectSlider} from './effects';
+import {destroyScaleController, initScaleController} from './scale';
+import {sendData} from '../api/api';
+import {displayMessageWithHandlers, isMessageVisible} from '../api/messages';
 
 const body = document.querySelector('body');
 const uploadForm = document.querySelector('.img-upload__form');
@@ -20,7 +20,7 @@ export function handleDocumentKeydown(event) {
   if (event.key === 'Escape') {
     event.preventDefault();
     const isFocusedOnTextInput = textInputs.some((input) => input === document.activeElement);
-    if (!messageElementState) {
+    if (!isMessageVisible()) {
       if (isFocusedOnTextInput) {
         event.stopPropagation();
       } else {
@@ -73,6 +73,7 @@ const uploadImage = () => {
 const sendImage = async (post) => {
   submitButton.disabled = true;
   try {
+    asdasdf
     await sendData(post);
     displayMessageWithHandlers('success');
     closeEditor();

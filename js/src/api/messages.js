@@ -1,4 +1,4 @@
-export let messageElementState = null;
+let messageElementState = null;
 let messageButton = null;
 let inner = null;
 
@@ -14,7 +14,7 @@ const handleOutsideClick = (event) => {
   }
 };
 
-export const displayMessageWithHandlers = (type) => {
+const displayMessageWithHandlers = (type) => {
   const messageTemplate = document.querySelector(`#${type}`).content.cloneNode(true);
   messageElementState = messageTemplate.querySelector(`.${type}`);
   messageButton = messageTemplate.querySelector(`.${type}__button`);
@@ -44,7 +44,7 @@ function handleDocumentKeydown(event) {
   }
 }
 
-export const timedMessage = (type, time) => {
+const timedMessage = (type, time) => {
   const messageTemplate = document.querySelector(`#${type}`).content.cloneNode(true);
   messageElementState = messageTemplate.querySelector(`.${type}`);
   document.body.appendChild(messageElementState);
@@ -52,3 +52,7 @@ export const timedMessage = (type, time) => {
     messageElementState.remove();
   }, time);
 };
+
+const isMessageVisible = () => !!messageElementState;
+
+export { displayMessageWithHandlers, timedMessage, isMessageVisible };
