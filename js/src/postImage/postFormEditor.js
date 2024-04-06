@@ -73,7 +73,6 @@ const uploadImage = () => {
 const sendImage = async (post) => {
   submitButton.disabled = true;
   try {
-    asdasdf
     await sendData(post);
     displayMessageWithHandlers('success');
     closeEditor();
