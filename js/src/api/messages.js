@@ -46,10 +46,10 @@ function handleDocumentKeydown(event) {
 
 const timedMessage = (type, time) => {
   const messageTemplate = document.querySelector(`#${type}`).content.cloneNode(true);
-  messageElementState = messageTemplate.querySelector(`.${type}`);
-  document.body.appendChild(messageElementState);
+  const messageElement = messageTemplate.querySelector(`.${type}`);
+  document.body.appendChild(messageElement);
   setTimeout(() => {
-    messageElementState.remove();
+    messageElement.remove();
   }, time);
 };
 
