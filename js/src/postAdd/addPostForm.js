@@ -75,6 +75,7 @@ const sendImage = async (post) => {
   try {
     await sendData(post);
     displayMessageWithHandlers('success');
+    closeEditor();
   } catch (err) {
     displayMessageWithHandlers('error');
   } finally {
@@ -101,8 +102,6 @@ function closeEditor() {
   effectItems.forEach((item) => item.removeEventListener('change', effectChangeHandler));
 
   photoEditorResetBtn.removeEventListener('click', onPhotoEditorResetBtnClick);
-  uploadFileControl.value = '';
-  textInputs.forEach((input) => (input.value = ''));
   document.removeEventListener('keydown', handleDocumentKeydown);
   uploadForm.reset();
 

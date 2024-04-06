@@ -15,7 +15,7 @@ const shufflePosts = (posts) => {
   return posts.slice(0, 10);
 };
 
-const sortByComments = (posts) => posts.sort((a, b) => a.comments.length <= b.comments.length);
+const sortByComments = (posts) => posts.sort((a, b) => b.comments.length - a.comments.length);
 
 const applyFilter = (filterName, posts) => {
   let filteredPosts;
