@@ -120,7 +120,7 @@ const setupCloseHandlers = () => {
   closeButton.addEventListener('click', clickHandler);
 };
 
-export const showBigPicture = (post) => {
+const showBigPicture = (post) => {
   openModal();
   renderImageAndDescription(post);
   renderComments(post);
@@ -134,3 +134,5 @@ export const showBigPicture = (post) => {
 
   setupCloseHandlers();
 };
+
+export default showBigPicture

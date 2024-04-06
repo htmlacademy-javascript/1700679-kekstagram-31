@@ -1,8 +1,8 @@
 import {createPristine, destroyPristine, formSubmit} from './formValidation';
-import {destroySlider, effectChangeHandler, initEffectSlider} from './effects';
 import {destroyScaleController, initScaleController} from './scale';
 import {sendData} from '../api/api';
 import {displayMessageWithHandlers, isMessageVisible} from '../api/messages';
+import {destroyEffectController, initEffectController} from './effects';
 
 const body = document.querySelector('body');
 const uploadForm = document.querySelector('.img-upload__form');
@@ -12,11 +12,10 @@ const photoEditorResetBtn = photoEditorForm.querySelector('#upload-cancel');
 const textInputs = [uploadForm.querySelector('.text__hashtags'), uploadForm.querySelector('.text__description')];
 const effectPreview = photoEditorForm.querySelectorAll('.effects__preview');
 const previewImage = photoEditorForm.querySelector('.img-upload__preview img');
-const effectItems = photoEditorForm.querySelectorAll('.effects__radio');
 const effectLevel = photoEditorForm.querySelector('.effect-level');
 const submitButton = uploadForm.querySelector('.img-upload__submit');
 
-export function handleDocumentKeydown(event) {
+const handleDocumentKeydown = (event) => {
   if (event.key === 'Escape') {
     event.preventDefault();
     const isFocusedOnTextInput = textInputs.some((input) => input === document.activeElement);
@@ -28,7 +27,7 @@ export function handleDocumentKeydown(event) {
       }
     }
   }
-}
+};
 
 const onPhotoEditorResetBtnClick = () => {
   closeEditor();
@@ -36,8 +35,6 @@ const onPhotoEditorResetBtnClick = () => {
 
 const uploadImage = () => {
   const onFileChange = () => {
-    destroySlider();
-
     photoEditorForm.classList.remove('hidden');
     body.classList.add('modal-open');
 
@@ -46,13 +43,9 @@ const uploadImage = () => {
     previewImage.src = URL.createObjectURL(uploadFileControl.files[0]);
     effectPreview.forEach((preview) => (preview.style.backgroundImage = `url(${previewImage.src})`));
 
-    initEffectSlider();
     initScaleController();
+    initEffectController();
 
-    effectLevel.classList.add('hidden');
-    effectItems.forEach((item) => {
-      item.addEventListener('change', effectChangeHandler);
-    });
     uploadForm.addEventListener('submit', formSubmit);
     photoEditorResetBtn.addEventListener('click', onPhotoEditorResetBtnClick);
     document.addEventListener('keydown', handleDocumentKeydown);
@@ -63,7 +56,6 @@ const uploadImage = () => {
     event.effectLevel = effectLevel.value;
     event.scale = photoEditorForm.querySelector('.scale__control--value').value;
     event.preventDefault();
-
   };
 
   uploadFileControl.addEventListener('change', onFileChange);
@@ -89,17 +81,7 @@ function closeEditor() {
   uploadForm.removeEventListener('submit', formSubmit);
 
   destroyScaleController();
-  destroySlider();
-
-  effectItems.forEach((item) => {
-    item.checked = item.value === 'none';
-  });
-
-  previewImage.style.filter = '';
-  previewImage.className = '';
-  previewImage.classList.add('effects__preview--none');
-  effectLevel.classList.add('hidden');
-  effectItems.forEach((item) => item.removeEventListener('change', effectChangeHandler));
+  destroyEffectController();
 
   photoEditorResetBtn.removeEventListener('click', onPhotoEditorResetBtnClick);
   document.removeEventListener('keydown', handleDocumentKeydown);
@@ -108,4 +90,4 @@ function closeEditor() {
   destroyPristine();
 }
 
-export { uploadImage, sendImage, closeEditor};
+export { uploadImage, sendImage };

@@ -8,8 +8,8 @@ const loadData = (route, method = 'GET', body = null) =>
     return response.json();
   });
 
-export const getData = async () => await loadData(routes.GET_DATA);
+const getData = async () => await loadData(routes.GET_DATA);
 
-export const sendData = async (body) => await loadData(routes.SEND_DATA, 'POST', body);
+const sendData = async (body) => await loadData(routes.SEND_DATA, 'POST', body);
 
-
+export {getData, sendData};

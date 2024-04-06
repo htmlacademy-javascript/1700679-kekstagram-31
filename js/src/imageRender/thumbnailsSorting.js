@@ -1,5 +1,5 @@
 import {debounce, generateRandomNumber} from './util';
-import {createThumbnails} from './thumbnails';
+import createThumbnails from './thumbnails';
 
 const filtersTemplate = document.querySelector('.img-filters');
 const filterButtons = filtersTemplate.querySelectorAll('.img-filters__button');
