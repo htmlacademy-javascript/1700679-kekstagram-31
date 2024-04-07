@@ -9,6 +9,8 @@ const ERROR_MESSAGE_FOR_COMMENTS = 'Длина комментария больш
 const hashtags = uploadImageForm.querySelector('.text__hashtags');
 const descriptions = uploadImageForm.querySelector('.text__description');
 const ERROR_DELAY = 5000;
+const PERMISSIBLE_FILE_TYPES = ['jpeg', 'jpg', 'png'];
+const PERMISSIBLE_FILE_SIZE = 100 * 1024 * 1024;
 
 let errorMessage = '';
 
@@ -105,7 +107,20 @@ const formSubmit = async (event) => {
       return;
     }
 
-    if (!file.type.startsWith('image/')) {
+    let isTypePermissible = false;
+    for (let i = 0; i < PERMISSIBLE_FILE_TYPES.length; i++) {
+      if (file.type.toLowerCase().endsWith(PERMISSIBLE_FILE_TYPES[i])) {
+        isTypePermissible = true;
+        break;
+      }
+    }
+
+    if(!isTypePermissible){
+      timedMessage('data-error', ERROR_DELAY);
+      return;
+    }
+
+    if(file.size > PERMISSIBLE_FILE_SIZE){
       timedMessage('data-error', ERROR_DELAY);
       return;
     }
