@@ -1,8 +1,9 @@
 import { initEffectSlider, effectChangeHandler, destroySlider } from './effectSlider.js';
 
-const previewImage = document.querySelector('.img-upload__preview img');
-const effectItems = document.querySelectorAll('.effects__radio');
-const effectLevel = document.querySelector('.effect-level');
+const uploadForm = document.querySelector('.img-upload__form');
+const previewImage = uploadForm.querySelector('.img-upload__preview img');
+const effectItems = uploadForm.querySelectorAll('.effects__radio');
+const effectLevel = uploadForm.querySelector('.effect-level');
 
 let currentEffect = 'none';
 
