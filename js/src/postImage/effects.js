@@ -26,10 +26,9 @@ const initEffectController = () => {
 const destroyEffectController = () => {
   effectItems.forEach((item) => {
     item.removeEventListener('change', updateEffect);
-  });
-  effectItems.forEach((item) => {
     item.checked = item.value === 'none';
   });
+  previewImage.classList.remove(`effects__preview--${currentEffect}`);
   destroySlider();
 };
 

@@ -1,7 +1,7 @@
 import {createPristine, destroyPristine, formSubmit} from './formValidation';
 import {destroyScaleController, initScaleController} from './scale';
 import {sendData} from '../api/api';
-import {displayMessageWithHandlers, isMessageVisible} from '../api/messages';
+import {displayMessageWithHandlers, isMessageWithHandlersVisible} from '../api/messages';
 import {destroyEffectController, initEffectController} from './effects';
 
 const body = document.querySelector('body');
@@ -19,7 +19,7 @@ const handleDocumentKeydown = (event) => {
   if (event.key === 'Escape') {
     event.preventDefault();
     const isFocusedOnTextInput = textInputs.some((input) => input === document.activeElement);
-    if (!isMessageVisible()) {
+    if (!isMessageWithHandlersVisible()) {
       if (isFocusedOnTextInput) {
         event.stopPropagation();
       } else {

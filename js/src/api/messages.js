@@ -53,6 +53,6 @@ const timedMessage = (type, time) => {
   }, time);
 };
 
-const isMessageVisible = () => !!messageElementState;
+const isMessageWithHandlersVisible = () => !!messageElementState;
 
-export { displayMessageWithHandlers, timedMessage, isMessageVisible };
+export { displayMessageWithHandlers, timedMessage, isMessageWithHandlersVisible };
