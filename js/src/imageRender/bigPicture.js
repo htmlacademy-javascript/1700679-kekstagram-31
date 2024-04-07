@@ -1,9 +1,16 @@
 let currentPost = null;
 let commentsShown = 0;
-const commentsLoader = document.querySelector('.comments-loader');
-const closeButton = document.getElementById('picture-cancel');
 const bigPicture = document.querySelector('.big-picture');
 const body = document.querySelector('body');
+const bigPictureImage = bigPicture.querySelector('.big-picture__img img');
+const bigPictureLikes = bigPicture.querySelector('.likes-count');
+const bigPictureCaption = bigPicture.querySelector('.social__caption');
+const commentsContainer = bigPicture.querySelector('.social__comments');
+const bigPictureCommentsSize = bigPicture.querySelector('.social__comment-shown-count');
+const bigPictureCommentsTotal = bigPicture.querySelector('.social__comment-total-count');
+const commentsLoader = bigPicture.querySelector('.comments-loader');
+const closeButton = bigPicture.querySelector('#picture-cancel');
+
 let clickHandler = null;
 let loadMoreCommentsHandler = null;
 
@@ -13,19 +20,12 @@ const openModal = () => {
 };
 
 const renderImageAndDescription = (post) => {
-  const bigPictureImage = document.querySelector('.big-picture__img img');
   bigPictureImage.src = post.url;
-
-  const bigPictureLikes = document.querySelector('.likes-count');
   bigPictureLikes.textContent = post.likes;
-
-  const bigPictureCaption = document.querySelector('.social__caption');
   bigPictureCaption.textContent = post.description;
 };
 
 const renderCommentBatch = (comments) => {
-  const commentsContainer = document.querySelector('.social__comments');
-
   comments.forEach((comment) => {
     const commentItem = document.createElement('li');
     commentItem.classList.add('social__comment');
@@ -48,7 +48,6 @@ const renderCommentBatch = (comments) => {
 
   commentsShown += comments.length;
 
-  const bigPictureCommentsSize = document.querySelector('.social__comment-shown-count');
   bigPictureCommentsSize.textContent = commentsShown.toString();
 };
 
@@ -68,8 +67,6 @@ const renderComments = (post) => {
   currentPost = post;
   commentsShown = 0;
 
-  const commentsContainer = document.querySelector('.social__comments');
-
   while (commentsContainer.firstChild) {
     commentsContainer.removeChild(commentsContainer.firstChild);
   }
@@ -77,10 +74,7 @@ const renderComments = (post) => {
   const commentsToRender = post.comments.slice(0, 5);
   renderCommentBatch(commentsToRender);
 
-  const bigPictureCommentsSize = document.querySelector('.social__comment-shown-count');
   bigPictureCommentsSize.textContent = commentsToRender.length.toString();
-
-  const bigPictureCommentsTotal = document.querySelector('.social__comment-total-count');
   bigPictureCommentsTotal.textContent = post.comments.length.toString();
 
   if (post.comments.length > 5) {
