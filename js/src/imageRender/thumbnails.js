@@ -1,4 +1,4 @@
-import { showBigPicture } from './bigPicture.js';
+import showBigPicture from './bigPicture.js';
 let clickHandler = null;
 const pictureTemplate = document.querySelector('#picture')
   .content.querySelector('.picture');
@@ -23,9 +23,14 @@ const postParser = (post) => {
   return pictureElement;
 };
 
-export const createThumbnails = (posts) => {
+const createThumbnails = (posts) => {
+  if (!Array.isArray(posts)) {
+    throw new Error('Posts must be an array');
+  }
   const fragment = document.createDocumentFragment();
   const pictures = document.querySelector('.pictures');
+  const previewPictures = document.querySelectorAll('.picture');
+  previewPictures.forEach((picture) => picture.remove());
   posts.forEach((post) => {
     const pictureElement = postParser(post);
     fragment.appendChild(pictureElement);
@@ -33,3 +38,5 @@ export const createThumbnails = (posts) => {
 
   pictures.appendChild(fragment);
 };
+
+export default createThumbnails;

@@ -1,6 +1,4 @@
-const internetErrorTemplate = document.querySelector('#data-error');
-
-export let messageElementState = null;
+let messageElementState = null;
 let messageButton = null;
 let inner = null;
 
@@ -16,7 +14,7 @@ const handleOutsideClick = (event) => {
   }
 };
 
-export const displayMessageWithHandlers = (type) => {
+const displayMessageWithHandlers = (type) => {
   const messageTemplate = document.querySelector(`#${type}`).content.cloneNode(true);
   messageElementState = messageTemplate.querySelector(`.${type}`);
   messageButton = messageTemplate.querySelector(`.${type}__button`);
@@ -46,7 +44,7 @@ function handleDocumentKeydown(event) {
   }
 }
 
-export const timedMessage = (type, time) => {
+const timedMessage = (type, time) => {
   const messageTemplate = document.querySelector(`#${type}`).content.cloneNode(true);
   const messageElement = messageTemplate.querySelector(`.${type}`);
   document.body.appendChild(messageElement);
@@ -54,3 +52,7 @@ export const timedMessage = (type, time) => {
     messageElement.remove();
   }, time);
 };
+
+const isMessageWithHandlersVisible = () => !!messageElementState;
+
+export { displayMessageWithHandlers, timedMessage, isMessageWithHandlersVisible };

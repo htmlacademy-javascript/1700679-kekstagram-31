@@ -9,44 +9,46 @@ let effectLevelSlider;
 const initEffectSlider = () => {
   effectLevelSlider = document.querySelector('.effect-level__slider');
 
-  noUiSlider.create(effectLevelSlider, {
-    range: {
-      min: 0,
-      max: 100,
-    },
-    start: 100,
-    step: 1,
-    connect: 'lower',
-    format: {
-      to: function (value) {
-        if (Number.isInteger(value)) {
-          return value.toFixed(0);
-        }
-        return value.toFixed(1);
+  if (effectLevelSlider){
+    noUiSlider.create(effectLevelSlider, {
+      range: {
+        min: 0,
+        max: 100,
       },
-      from: function (value) {
-        return parseFloat(value);
+      start: 100,
+      step: 1,
+      connect: 'lower',
+      format: {
+        to: function (value) {
+          if (Number.isInteger(value)) {
+            return value.toFixed(0);
+          }
+          return value.toFixed(1);
+        },
+        from: function (value) {
+          return parseFloat(value);
+        }
       }
-    }
-  });
+    });
 
-  effectLevelSlider.noUiSlider.on('update', (values, handle) => {
-    effectLevelValue.value = values[handle];
+    effectLevelSlider.noUiSlider.on('update', (values, handle) => {
+      effectLevelValue.value = values[handle];
 
-    if (previewImage.classList.contains('effects__preview--chrome')) {
-      previewImage.style.filter = `grayscale(${values[handle]})`;
-    } else if (previewImage.classList.contains('effects__preview--sepia')) {
-      previewImage.style.filter = `sepia(${values[handle]})`;
-    } else if (previewImage.classList.contains('effects__preview--marvin')) {
-      previewImage.style.filter = `invert(${values[handle]}%)`;
-    } else if (previewImage.classList.contains('effects__preview--phobos')) {
-      previewImage.style.filter = `blur(${values[handle]}px)`;
-    } else if (previewImage.classList.contains('effects__preview--heat')) {
-      previewImage.style.filter = `brightness(${parseFloat(values[handle]) + 1})`;
-    } else {
-      previewImage.style.filter = '';
-    }
-  });
+      if (previewImage.classList.contains('effects__preview--chrome')) {
+        previewImage.style.filter = `grayscale(${values[handle]})`;
+      } else if (previewImage.classList.contains('effects__preview--sepia')) {
+        previewImage.style.filter = `sepia(${values[handle]})`;
+      } else if (previewImage.classList.contains('effects__preview--marvin')) {
+        previewImage.style.filter = `invert(${values[handle]}%)`;
+      } else if (previewImage.classList.contains('effects__preview--phobos')) {
+        previewImage.style.filter = `blur(${values[handle]}px)`;
+      } else if (previewImage.classList.contains('effects__preview--heat')) {
+        previewImage.style.filter = `brightness(${parseFloat(values[handle])})`;
+      } else {
+        previewImage.style.filter = '';
+      }
+    });
+  }
 };
 
 const effectChangeHandler = (event) => {
@@ -113,10 +115,14 @@ const effectChangeHandler = (event) => {
 };
 
 const destroySlider = () => {
-  effectLevelValue.value = 100;
-  effectLevelSlider.noUiSlider.set(100);
-  effectLevelSlider.noUiSlider.off('update');
-  effectLevelSlider.noUiSlider.destroy();
+  if (effectLevelSlider) {
+    effectLevelValue.value = 100;
+    if (effectLevelSlider.noUiSlider) {
+      effectLevelSlider.noUiSlider.set(100);
+      effectLevelSlider.noUiSlider.off('update');
+      effectLevelSlider.noUiSlider.destroy();
+    }
+  }
 };
 
 export { initEffectSlider, effectChangeHandler, destroySlider };

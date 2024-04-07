@@ -7,6 +7,24 @@ const scaleControlBigger = photoEditorForm.querySelector('.scale__control--bigge
 
 let scale = 100;
 
+const handleScaleControlSmallerClick = () => {
+  scale -= 25;
+  if (scale < 25) {
+    scale = 25;
+  }
+  scaleControl.value = `${scale}%`;
+  previewImage.style.transform = `scale(${scale / 100})`;
+};
+
+const handleScaleControlBiggerClick = () => {
+  scale += 25;
+  if (scale > 100) {
+    scale = 100;
+  }
+  scaleControl.value = `${scale}%`;
+  previewImage.style.transform = `scale(${scale / 100})`;
+};
+
 const initScaleController = () => {
   scaleControlSmaller.addEventListener('click', handleScaleControlSmallerClick);
   scaleControlBigger.addEventListener('click', handleScaleControlBiggerClick);
@@ -19,23 +37,5 @@ const destroyScaleController = () => {
   scaleControlSmaller.removeEventListener('click', handleScaleControlSmallerClick);
   scaleControlBigger.removeEventListener('click', handleScaleControlBiggerClick);
 };
-
-function handleScaleControlSmallerClick() {
-  scale -= 25;
-  if (scale < 25) {
-    scale = 25;
-  }
-  scaleControl.value = `${scale}%`;
-  previewImage.style.transform = `scale(${scale / 100})`;
-}
-
-function handleScaleControlBiggerClick() {
-  scale += 25;
-  if (scale > 100) {
-    scale = 100;
-  }
-  scaleControl.value = `${scale}%`;
-  previewImage.style.transform = `scale(${scale / 100})`;
-}
 
 export { initScaleController, destroyScaleController };

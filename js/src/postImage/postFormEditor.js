@@ -1,8 +1,8 @@
-import {createPristine, destroyPristine, formSubmit} from './sendValidate';
-import { destroySlider, effectChangeHandler, initEffectSlider } from './effects';
-import { destroyScaleController, initScaleController } from './scale';
-import { sendData } from '../api/api';
-import { displayMessageWithHandlers, messageElementState} from '../api/messages';
+import {createPristine, destroyPristine, formSubmit} from './formValidation';
+import {destroyScaleController, initScaleController} from './scale';
+import {sendData} from '../api/api';
+import {displayMessageWithHandlers, isMessageWithHandlersVisible} from '../api/messages';
+import {destroyEffectController, initEffectController} from './effects';
 
 const body = document.querySelector('body');
 const uploadForm = document.querySelector('.img-upload__form');
@@ -12,15 +12,14 @@ const photoEditorResetBtn = photoEditorForm.querySelector('#upload-cancel');
 const textInputs = [uploadForm.querySelector('.text__hashtags'), uploadForm.querySelector('.text__description')];
 const effectPreview = photoEditorForm.querySelectorAll('.effects__preview');
 const previewImage = photoEditorForm.querySelector('.img-upload__preview img');
-const effectItems = photoEditorForm.querySelectorAll('.effects__radio');
 const effectLevel = photoEditorForm.querySelector('.effect-level');
 const submitButton = uploadForm.querySelector('.img-upload__submit');
 
-export function handleDocumentKeydown(event) {
+const handleDocumentKeydown = (event) => {
   if (event.key === 'Escape') {
     event.preventDefault();
     const isFocusedOnTextInput = textInputs.some((input) => input === document.activeElement);
-    if (!messageElementState) {
+    if (!isMessageWithHandlersVisible()) {
       if (isFocusedOnTextInput) {
         event.stopPropagation();
       } else {
@@ -28,7 +27,7 @@ export function handleDocumentKeydown(event) {
       }
     }
   }
-}
+};
 
 const onPhotoEditorResetBtnClick = () => {
   closeEditor();
@@ -44,13 +43,9 @@ const uploadImage = () => {
     previewImage.src = URL.createObjectURL(uploadFileControl.files[0]);
     effectPreview.forEach((preview) => (preview.style.backgroundImage = `url(${previewImage.src})`));
 
-    initEffectSlider();
     initScaleController();
+    initEffectController();
 
-    effectLevel.classList.add('hidden');
-    effectItems.forEach((item) => {
-      item.addEventListener('change', effectChangeHandler);
-    });
     uploadForm.addEventListener('submit', formSubmit);
     photoEditorResetBtn.addEventListener('click', onPhotoEditorResetBtnClick);
     document.addEventListener('keydown', handleDocumentKeydown);
@@ -61,7 +56,6 @@ const uploadImage = () => {
     event.effectLevel = effectLevel.value;
     event.scale = photoEditorForm.querySelector('.scale__control--value').value;
     event.preventDefault();
-
   };
 
   uploadFileControl.addEventListener('change', onFileChange);
@@ -69,16 +63,15 @@ const uploadImage = () => {
 };
 
 const sendImage = async (post) => {
-  if (post.checkValidity()) {
-    submitButton.disabled = true;
-    try {
-      await sendData(new FormData(post));
-      displayMessageWithHandlers('success');
-    } catch (err) {
-      displayMessageWithHandlers('error');
-    } finally {
-      submitButton.disabled = false;
-    }
+  submitButton.disabled = true;
+  try {
+    await sendData(post);
+    displayMessageWithHandlers('success');
+    closeEditor();
+  } catch (err) {
+    displayMessageWithHandlers('error');
+  } finally {
+    submitButton.disabled = false;
   }
 };
 
@@ -88,25 +81,13 @@ function closeEditor() {
   uploadForm.removeEventListener('submit', formSubmit);
 
   destroyScaleController();
-  destroySlider();
-
-  effectItems.forEach((item) => {
-    item.checked = item.value === 'none';
-  });
-
-  previewImage.style.filter = '';
-  previewImage.className = '';
-  previewImage.classList.add('effects__preview--none');
-  effectLevel.classList.add('hidden');
-  effectItems.forEach((item) => item.removeEventListener('change', effectChangeHandler));
+  destroyEffectController();
 
   photoEditorResetBtn.removeEventListener('click', onPhotoEditorResetBtnClick);
-  uploadFileControl.value = '';
-  textInputs.forEach((input) => (input.value = ''));
   document.removeEventListener('keydown', handleDocumentKeydown);
   uploadForm.reset();
 
   destroyPristine();
 }
 
-export { uploadImage, sendImage, closeEditor};
+export { uploadImage, sendImage };

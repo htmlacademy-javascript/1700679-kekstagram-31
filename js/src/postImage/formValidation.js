@@ -1,4 +1,4 @@
-import {sendImage} from './addPostForm';
+import {sendImage} from './postFormEditor';
 import {timedMessage} from '../api/messages';
 
 const uploadImageForm = document.querySelector('.img-upload__form');
@@ -8,6 +8,7 @@ const MAX_HASHTAG_LENGTH = 20;
 const ERROR_MESSAGE_FOR_COMMENTS = 'Длина комментария больше 140 символов.';
 const hashtags = uploadImageForm.querySelector('.text__hashtags');
 const descriptions = uploadImageForm.querySelector('.text__description');
+const ERROR_DELAY = 5000;
 
 let errorMessage = '';
 
@@ -67,7 +68,7 @@ const isHashtagsValid = (value) => {
 const isCommentValid = (value) => value.length <= MAX_COMMENT_LENGTH;
 let pristineConfig = null;
 
-export const destroyPristine = () => {
+const destroyPristine = () => {
   if (pristineConfig) {
     pristineConfig.reset();
     pristineConfig.destroy();
@@ -75,7 +76,7 @@ export const destroyPristine = () => {
   }
 };
 
-export const createPristine = (form) => {
+const createPristine = (form) => {
   if (!pristineConfig){
     pristineConfig = new Pristine(form, {
       classTo: 'img-upload__field-wrapper',
@@ -91,13 +92,28 @@ export const createPristine = (form) => {
   }
 };
 
-export const formSubmit = async (event) => {
+const formSubmit = async (event) => {
   event.preventDefault();
   const isValid = pristineConfig.validate();
 
-  if (isValid) {
-    await sendImage(event.target);
+  if (isValid && event.target.checkValidity()) {
+    const formData = new FormData(event.target);
+    const file = formData.get('filename');
+
+    if (!file) {
+      timedMessage('data-error', ERROR_DELAY);
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      timedMessage('data-error', ERROR_DELAY);
+      return;
+    }
+
+    await sendImage(formData);
   } else {
-    timedMessage('data-error', 5000);
+    timedMessage('data-error', ERROR_DELAY);
   }
 };
+
+export { formSubmit, createPristine, destroyPristine };
