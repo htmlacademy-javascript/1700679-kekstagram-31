@@ -1,10 +1,15 @@
 import {debounce, generateRandomNumber} from './util';
 import createThumbnails from './thumbnails';
 
+const DELAY = 500;
+const THUMBNAILS_RANDOM_SORT_COUNT_MAX = 10;
+const THUMBNAILS_RANDOM_SORT_COUNT_MIN = 0;
+const DEFAULT_FILTER = 'filter-default';
+
 const filtersTemplate = document.querySelector('.img-filters');
 const filterButtons = filtersTemplate.querySelectorAll('.img-filters__button');
-let currentFilter = 'filter-default';
-const DELAY = 500;
+
+let currentFilter = DEFAULT_FILTER;
 let initialPosts;
 
 const shufflePosts = (posts) => {
@@ -12,10 +17,10 @@ const shufflePosts = (posts) => {
     const randomIndex = generateRandomNumber(0, i);
     [posts[randomIndex], posts[i]] = [posts[i], posts[randomIndex]];
   }
-  return posts.slice(0, 10);
+  return posts.slice(THUMBNAILS_RANDOM_SORT_COUNT_MIN, THUMBNAILS_RANDOM_SORT_COUNT_MAX);
 };
 
-const sortByComments = (posts) => posts.sort((a, b) => b.comments.length - a.comments.length);
+const sortByComments = (posts) => posts.sort((firstPost, secondPost) => secondPost.comments.length - firstPost.comments.length);
 
 const applyFilter = (filterName, posts) => {
   let filteredPosts;

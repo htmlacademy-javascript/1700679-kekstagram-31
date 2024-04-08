@@ -1,16 +1,17 @@
 import {sendImage} from './postFormEditor';
 import {timedMessage} from '../api/messages';
 
-const uploadImageForm = document.querySelector('.img-upload__form');
+const ERROR_DELAY = 5000;
+const PERMISSIBLE_FILE_TYPES = ['jpeg', 'jpg', 'png'];
+const PERMISSIBLE_FILE_SIZE = 100 * 1024 * 1024;
 const MAX_COMMENT_LENGTH = 140;
 const MAX_HASHTAG_COUNT = 5;
 const MAX_HASHTAG_LENGTH = 20;
 const ERROR_MESSAGE_FOR_COMMENTS = 'Длина комментария больше 140 символов.';
+
+const uploadImageForm = document.querySelector('.img-upload__form');
 const hashtags = uploadImageForm.querySelector('.text__hashtags');
 const descriptions = uploadImageForm.querySelector('.text__description');
-const ERROR_DELAY = 5000;
-const PERMISSIBLE_FILE_TYPES = ['jpeg', 'jpg', 'png'];
-const PERMISSIBLE_FILE_SIZE = 100 * 1024 * 1024;
 
 let errorMessage = '';
 

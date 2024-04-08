@@ -1,11 +1,13 @@
 import { initEffectSlider, effectChangeHandler, destroySlider } from './effectSlider.js';
 
+const DEFAULT_EFFECT = 'none';
+
 const uploadForm = document.querySelector('.img-upload__form');
 const previewImage = uploadForm.querySelector('.img-upload__preview img');
 const effectItems = uploadForm.querySelectorAll('.effects__radio');
 const effectLevel = uploadForm.querySelector('.effect-level');
 
-let currentEffect = 'none';
+let currentEffect = DEFAULT_EFFECT;
 
 const updateEffect = (event) => {
   currentEffect = event.target.value;

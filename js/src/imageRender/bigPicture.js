@@ -1,5 +1,6 @@
-let currentPost = null;
-let commentsShown = 0;
+const COMMENTS_BATCH_SIZE = 5;
+const INITIAL_COMMENTS_COUNT = 5;
+
 const bigPicture = document.querySelector('.big-picture');
 const body = document.querySelector('body');
 const bigPictureImage = bigPicture.querySelector('.big-picture__img img');
@@ -13,6 +14,8 @@ const closeButton = bigPicture.querySelector('#picture-cancel');
 
 let clickHandler = null;
 let loadMoreCommentsHandler = null;
+let currentPost = null;
+let commentsShown = 0;
 
 const openModal = () => {
   bigPicture.classList.remove('hidden');
@@ -53,7 +56,7 @@ const renderCommentBatch = (comments) => {
 
 const loadMoreComments = () => {
   const startIndex = commentsShown;
-  const endIndex = Math.min(startIndex + 5, currentPost.comments.length);
+  const endIndex = Math.min(startIndex + INITIAL_COMMENTS_COUNT, currentPost.comments.length);
 
   const commentsToRender = currentPost.comments.slice(startIndex, endIndex);
   renderCommentBatch(commentsToRender);
@@ -71,7 +74,7 @@ const renderComments = (post) => {
     commentsContainer.removeChild(commentsContainer.firstChild);
   }
 
-  const commentsToRender = post.comments.slice(0, 5);
+  const commentsToRender = post.comments.slice(0, COMMENTS_BATCH_SIZE);
   renderCommentBatch(commentsToRender);
 
   bigPictureCommentsSize.textContent = commentsToRender.length.toString();
