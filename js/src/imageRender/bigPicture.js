@@ -84,9 +84,9 @@ const renderComments = (post) => {
   } else {
     commentsLoader.classList.add('hidden');
   }
-};
 
-commentsLoader.addEventListener('click', onLoadMoreCommentsClick);
+  commentsLoader.addEventListener('click', onLoadMoreCommentsClick);
+};
 
 const close = () => {
   body.classList.remove('modal-open');
