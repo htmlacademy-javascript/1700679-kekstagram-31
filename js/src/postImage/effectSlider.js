@@ -17,6 +17,8 @@ const DEFAULT_RANGE_MIN = 0;
 const DEFAULT_RANGE_MAX = 100;
 const DEFAULT_START = 100;
 const DEFAULT_STEP = 1;
+const INTEGER_PRECISION = 0;
+const DECIMAL_PRECISION = 1;
 
 const uploadForm = document.querySelector('.img-upload__form');
 const photoEditorForm = uploadForm.querySelector('.img-upload__overlay');
@@ -41,9 +43,9 @@ const initEffectSlider = () => {
       format: {
         to: function (value) {
           if (Number.isInteger(value)) {
-            return value.toFixed(0);
+            return value.toFixed(INTEGER_PRECISION);
           }
-          return value.toFixed(1);
+          return value.toFixed(DECIMAL_PRECISION);
         },
         from: function (value) {
           return parseFloat(value);

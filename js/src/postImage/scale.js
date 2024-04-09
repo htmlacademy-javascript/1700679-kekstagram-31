@@ -2,6 +2,7 @@ const SCALE_STEP = 25;
 const MAX_SCALE = 100;
 const MIN_SCALE = 25;
 const INITIAL_SCALE = 100;
+const PERCENTAGE_VALUE_DIVIDER = 100;
 
 const uploadForm = document.querySelector('.img-upload__form');
 const photoEditorForm = uploadForm.querySelector('.img-upload__overlay');
@@ -18,7 +19,7 @@ const onScaleControlSmallerClick = () => {
     scale = MIN_SCALE;
   }
   scaleControl.value = `${scale}%`;
-  previewImage.style.transform = `scale(${scale / INITIAL_SCALE})`;
+  previewImage.style.transform = `scale(${scale / PERCENTAGE_VALUE_DIVIDER})`;
 };
 
 const onScaleControlBiggerClick = () => {
@@ -27,7 +28,7 @@ const onScaleControlBiggerClick = () => {
     scale = MAX_SCALE;
   }
   scaleControl.value = `${scale}%`;
-  previewImage.style.transform = `scale(${scale / INITIAL_SCALE})`;
+  previewImage.style.transform = `scale(${scale / PERCENTAGE_VALUE_DIVIDER})`;
 };
 
 const initScaleController = () => {
@@ -37,7 +38,7 @@ const initScaleController = () => {
 
 const destroyScaleController = () => {
   scale = INITIAL_SCALE;
-  previewImage.style.transform = `scale(${scale / INITIAL_SCALE})`;
+  previewImage.style.transform = `scale(${scale / PERCENTAGE_VALUE_DIVIDER})`;
   scaleControl.value = `${scale}%`;
   scaleControlSmaller.removeEventListener('click', onScaleControlSmallerClick);
   scaleControlBigger.removeEventListener('click', onScaleControlBiggerClick);

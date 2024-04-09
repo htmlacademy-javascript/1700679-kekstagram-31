@@ -14,7 +14,7 @@ const commentsLoader = bigPicture.querySelector('.comments-loader');
 const closeButton = bigPicture.querySelector('#picture-cancel');
 
 let currentPost = null;
-let commentsShown = 0;
+let commentsShown;
 
 const openModal = () => {
   bigPicture.classList.remove('hidden');
