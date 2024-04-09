@@ -1,20 +1,21 @@
 import {sendImage} from './postFormEditor';
-import {timedMessage} from '../api/messages';
+import {displayTimedMessage} from '../api/messages';
 
-const uploadImageForm = document.querySelector('.img-upload__form');
+const ERROR_DELAY = 5000;
+const PERMITTED_FILE_EXTENSIONS = ['jpeg', 'jpg', 'png'];
+const PERMISSIBLE_FILE_SIZE = 100 * 1024 * 1024;
 const MAX_COMMENT_LENGTH = 140;
 const MAX_HASHTAG_COUNT = 5;
 const MAX_HASHTAG_LENGTH = 20;
 const ERROR_MESSAGE_FOR_COMMENTS = 'Длина комментария больше 140 символов.';
+
+const uploadImageForm = document.querySelector('.img-upload__form');
 const hashtags = uploadImageForm.querySelector('.text__hashtags');
 const descriptions = uploadImageForm.querySelector('.text__description');
-const ERROR_DELAY = 5000;
-const PERMISSIBLE_FILE_TYPES = ['jpeg', 'jpg', 'png'];
-const PERMISSIBLE_FILE_SIZE = 100 * 1024 * 1024;
 
 let errorMessage = '';
 
-const error = () => errorMessage;
+const getError = () => errorMessage;
 
 const isHashtagsValid = (value) => {
   errorMessage = '';
@@ -87,14 +88,14 @@ const createPristine = (form) => {
       errorTextTag: 'div',
     });
 
-    pristineConfig.addValidator(hashtags, isHashtagsValid, error);
+    pristineConfig.addValidator(hashtags, isHashtagsValid, getError);
     pristineConfig.addValidator(descriptions, isCommentValid, ERROR_MESSAGE_FOR_COMMENTS);
   } else{
     destroyPristine();
   }
 };
 
-const formSubmit = async (event) => {
+const onFileUploadSubmitValidate = async (event) => {
   event.preventDefault();
   const isValid = pristineConfig.validate();
 
@@ -103,32 +104,32 @@ const formSubmit = async (event) => {
     const file = formData.get('filename');
 
     if (!file) {
-      timedMessage('data-error', ERROR_DELAY);
+      displayTimedMessage('data-error', ERROR_DELAY);
       return;
     }
 
     let isTypePermissible = false;
-    for (let i = 0; i < PERMISSIBLE_FILE_TYPES.length; i++) {
-      if (file.type.toLowerCase().endsWith(PERMISSIBLE_FILE_TYPES[i])) {
+    for (let i = 0; i < PERMITTED_FILE_EXTENSIONS.length; i++) {
+      if (file.type.toLowerCase().endsWith(PERMITTED_FILE_EXTENSIONS[i])) {
         isTypePermissible = true;
         break;
       }
     }
 
     if(!isTypePermissible){
-      timedMessage('data-error', ERROR_DELAY);
+      displayTimedMessage('data-error', ERROR_DELAY);
       return;
     }
 
     if(file.size > PERMISSIBLE_FILE_SIZE){
-      timedMessage('data-error', ERROR_DELAY);
+      displayTimedMessage('data-error', ERROR_DELAY);
       return;
     }
 
     await sendImage(formData);
   } else {
-    timedMessage('data-error', ERROR_DELAY);
+    displayTimedMessage('data-error', ERROR_DELAY);
   }
 };
 
-export { formSubmit, createPristine, destroyPristine };
+export { onFileUploadSubmitValidate, createPristine, destroyPristine };

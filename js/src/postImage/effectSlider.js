@@ -1,3 +1,23 @@
+const MIN_GRAYSCALE = 0;
+const MAX_GRAYSCALE = 1;
+const STEP_GRAYSCALE = 0.1;
+const MIN_SEPIA = 0;
+const MAX_SEPIA = 1;
+const STEP_SEPIA = 0.1;
+const MIN_MARVIN = 0;
+const MAX_MARVIN = 100;
+const STEP_MARVIN = 1;
+const MIN_PHOBOS = 0;
+const MAX_PHOBOS = 3;
+const STEP_PHOBOS = 0.1;
+const MIN_HEAT = 1;
+const MAX_HEAT = 3;
+const STEP_HEAT = 0.1;
+const DEFAULT_RANGE_MIN = 0;
+const DEFAULT_RANGE_MAX = 100;
+const DEFAULT_START = 100;
+const DEFAULT_STEP = 1;
+
 const uploadForm = document.querySelector('.img-upload__form');
 const photoEditorForm = uploadForm.querySelector('.img-upload__overlay');
 const previewImage = photoEditorForm.querySelector('.img-upload__preview img');
@@ -12,11 +32,11 @@ const initEffectSlider = () => {
   if (effectLevelSlider){
     noUiSlider.create(effectLevelSlider, {
       range: {
-        min: 0,
-        max: 100,
+        min: DEFAULT_RANGE_MIN,
+        max: DEFAULT_RANGE_MAX,
       },
-      start: 100,
-      step: 1,
+      start: DEFAULT_START,
+      step: DEFAULT_STEP,
       connect: 'lower',
       format: {
         to: function (value) {
@@ -60,65 +80,65 @@ const effectChangeHandler = (event) => {
   if (event.target.value === 'chrome') {
     effectLevelSlider.noUiSlider.updateOptions({
       range: {
-        min: 0,
-        max: 1,
+        min: MIN_GRAYSCALE,
+        max: MAX_GRAYSCALE,
       },
-      start: 1,
-      step: 0.1,
+      start: MAX_GRAYSCALE,
+      step: STEP_GRAYSCALE,
     });
   } else if (event.target.value === 'sepia') {
     effectLevelSlider.noUiSlider.updateOptions({
       range: {
-        min: 0,
-        max: 1,
+        min: MIN_SEPIA,
+        max: MAX_SEPIA,
       },
-      start: 1,
-      step: 0.1,
+      start: MAX_SEPIA,
+      step: STEP_SEPIA,
     });
   } else if (event.target.value === 'marvin') {
     effectLevelSlider.noUiSlider.updateOptions({
       range: {
-        min: 0,
-        max: 100,
+        min: MIN_MARVIN,
+        max: MAX_MARVIN,
       },
-      start: 100,
-      step: 1,
+      start: MAX_MARVIN,
+      step: STEP_MARVIN,
     });
   } else if (event.target.value === 'phobos') {
     effectLevelSlider.noUiSlider.updateOptions({
       range: {
-        min: 0,
-        max: 3,
+        min: MIN_PHOBOS,
+        max: MAX_PHOBOS,
       },
-      start: 3,
-      step: 0.1,
+      start: MAX_PHOBOS,
+      step: STEP_PHOBOS,
     });
   } else if (event.target.value === 'heat') {
     effectLevelSlider.noUiSlider.updateOptions({
       range: {
-        min: 1,
-        max: 3,
+        min: MIN_HEAT,
+        max: MAX_HEAT,
       },
-      start: 3,
-      step: 0.1,
+      start: MAX_HEAT,
+      step: STEP_HEAT,
     });
   } else {
     effectLevelSlider.noUiSlider.updateOptions({
       range: {
-        min: 0,
-        max: 100,
+        min: DEFAULT_RANGE_MIN,
+        max: DEFAULT_RANGE_MAX,
       },
-      start: 100,
-      step: 1,
+      start: DEFAULT_START,
+      step: DEFAULT_STEP,
     });
   }
 };
 
 const destroySlider = () => {
   if (effectLevelSlider) {
-    effectLevelValue.value = 100;
+    effectLevelValue.value = DEFAULT_START;
     if (effectLevelSlider.noUiSlider) {
-      effectLevelSlider.noUiSlider.set(100);
+      effectLevelSlider.noUiSlider.set(DEFAULT_START);
       effectLevelSlider.noUiSlider.off('update');
       effectLevelSlider.noUiSlider.destroy();
     }

@@ -1,13 +1,15 @@
 import { initEffectSlider, effectChangeHandler, destroySlider } from './effectSlider.js';
 
+const DEFAULT_EFFECT = 'none';
+
 const uploadForm = document.querySelector('.img-upload__form');
 const previewImage = uploadForm.querySelector('.img-upload__preview img');
 const effectItems = uploadForm.querySelectorAll('.effects__radio');
 const effectLevel = uploadForm.querySelector('.effect-level');
 
-let currentEffect = 'none';
+let currentEffect = DEFAULT_EFFECT;
 
-const updateEffect = (event) => {
+const onEffectChange = (event) => {
   currentEffect = event.target.value;
   previewImage.className = '';
   previewImage.classList.add(`effects__preview--${currentEffect}`);
@@ -20,13 +22,13 @@ const initEffectController = () => {
   initEffectSlider();
   effectLevel.classList.add('hidden');
   effectItems.forEach((item) => {
-    item.addEventListener('change', updateEffect);
+    item.addEventListener('change', onEffectChange);
   });
 };
 
 const destroyEffectController = () => {
   effectItems.forEach((item) => {
-    item.removeEventListener('change', updateEffect);
+    item.removeEventListener('change', onEffectChange);
     item.checked = item.value === 'none';
   });
   previewImage.classList.remove(`effects__preview--${currentEffect}`);
