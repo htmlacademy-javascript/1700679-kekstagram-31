@@ -4,6 +4,8 @@ import {sendData} from '../api/api';
 import {displayMessageWithHandlers, isMessageWithHandlersVisible} from '../api/messages';
 import {destroyEffectController, initEffectController} from './effects';
 
+const SELECTED_FILE = 0;
+
 const body = document.querySelector('body');
 const uploadForm = document.querySelector('.img-upload__form');
 const uploadFileControl = uploadForm.querySelector('#upload-file');
@@ -40,7 +42,7 @@ const uploadImage = () => {
 
     createPristine(uploadForm);
 
-    previewImage.src = URL.createObjectURL(uploadFileControl.files[0]);
+    previewImage.src = URL.createObjectURL(uploadFileControl.files[SELECTED_FILE]);
     effectPreview.forEach((preview) => (preview.style.backgroundImage = `url(${previewImage.src})`));
 
     initScaleController();
