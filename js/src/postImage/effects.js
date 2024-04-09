@@ -9,7 +9,7 @@ const effectLevel = uploadForm.querySelector('.effect-level');
 
 let currentEffect = DEFAULT_EFFECT;
 
-const updateEffect = (event) => {
+const onEffectChange = (event) => {
   currentEffect = event.target.value;
   previewImage.className = '';
   previewImage.classList.add(`effects__preview--${currentEffect}`);
@@ -22,13 +22,13 @@ const initEffectController = () => {
   initEffectSlider();
   effectLevel.classList.add('hidden');
   effectItems.forEach((item) => {
-    item.addEventListener('change', updateEffect);
+    item.addEventListener('change', onEffectChange);
   });
 };
 
 const destroyEffectController = () => {
   effectItems.forEach((item) => {
-    item.removeEventListener('change', updateEffect);
+    item.removeEventListener('change', onEffectChange);
     item.checked = item.value === 'none';
   });
   previewImage.classList.remove(`effects__preview--${currentEffect}`);

@@ -1,4 +1,4 @@
-import {createPristine, destroyPristine, formSubmit} from './formValidation';
+import {createPristine, destroyPristine, onFileUploadSubmitValidate} from './formValidation';
 import {destroyScaleController, initScaleController} from './scale';
 import {sendData} from '../api/api';
 import {displayMessageWithHandlers, isMessageWithHandlersVisible} from '../api/messages';
@@ -15,7 +15,7 @@ const previewImage = photoEditorForm.querySelector('.img-upload__preview img');
 const effectLevel = photoEditorForm.querySelector('.effect-level');
 const submitButton = uploadForm.querySelector('.img-upload__submit');
 
-const handleDocumentKeydown = (event) => {
+const onDocumentKeyDown = (event) => {
   if (event.key === 'Escape') {
     event.preventDefault();
     const isFocusedOnTextInput = textInputs.some((input) => input === document.activeElement);
@@ -46,15 +46,20 @@ const uploadImage = () => {
     initScaleController();
     initEffectController();
 
-    uploadForm.addEventListener('submit', formSubmit);
+    uploadForm.addEventListener('submit', onFileUploadSubmitValidate);
     photoEditorResetBtn.addEventListener('click', onPhotoEditorResetBtnClick);
-    document.addEventListener('keydown', handleDocumentKeydown);
+    document.addEventListener('keydown', onDocumentKeyDown);
   };
 
   const onFormSubmit = async (event) => {
-    event.effect = document.querySelector('input[name="effect"]:checked').value;
-    event.effectLevel = effectLevel.value;
-    event.scale = photoEditorForm.querySelector('.scale__control--value').value;
+    const selectedEffect = document.querySelector('input[name="effect"]:checked').value;
+    const effectLevelValue = effectLevel.value;
+    const scaleValue = photoEditorForm.querySelector('.scale__control--value').value;
+
+    event.effect = selectedEffect;
+    event.effectLevel = effectLevelValue;
+    event.scale = scaleValue;
+
     event.preventDefault();
   };
 
@@ -78,13 +83,13 @@ const sendImage = async (post) => {
 function closeEditor() {
   photoEditorForm.classList.add('hidden');
   body.classList.remove('modal-open');
-  uploadForm.removeEventListener('submit', formSubmit);
+  uploadForm.removeEventListener('submit', onFileUploadSubmitValidate);
 
   destroyScaleController();
   destroyEffectController();
 
   photoEditorResetBtn.removeEventListener('click', onPhotoEditorResetBtnClick);
-  document.removeEventListener('keydown', handleDocumentKeydown);
+  document.removeEventListener('keydown', onDocumentKeyDown);
   uploadForm.reset();
 
   destroyPristine();

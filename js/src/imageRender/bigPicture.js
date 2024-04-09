@@ -1,5 +1,6 @@
 const COMMENTS_BATCH_SIZE = 5;
 const INITIAL_COMMENTS_COUNT = 5;
+const AVATAR_SIZE = 35;
 
 const bigPicture = document.querySelector('.big-picture');
 const body = document.querySelector('body');
@@ -12,8 +13,6 @@ const bigPictureCommentsTotal = bigPicture.querySelector('.social__comment-total
 const commentsLoader = bigPicture.querySelector('.comments-loader');
 const closeButton = bigPicture.querySelector('#picture-cancel');
 
-let clickHandler = null;
-let loadMoreCommentsHandler = null;
 let currentPost = null;
 let commentsShown = 0;
 
@@ -37,8 +36,8 @@ const renderCommentBatch = (comments) => {
     avatar.classList.add('social__picture');
     avatar.src = comment.avatar;
     avatar.alt = comment.name;
-    avatar.width = 35;
-    avatar.height = 35;
+    avatar.width = AVATAR_SIZE;
+    avatar.height = AVATAR_SIZE;
 
     const commentText = document.createElement('p');
     commentText.classList.add('social__text');
@@ -54,7 +53,7 @@ const renderCommentBatch = (comments) => {
   bigPictureCommentsSize.textContent = commentsShown.toString();
 };
 
-const loadMoreComments = () => {
+const onLoadMoreCommentsClick = () => {
   const startIndex = commentsShown;
   const endIndex = Math.min(startIndex + INITIAL_COMMENTS_COUNT, currentPost.comments.length);
 
@@ -80,55 +79,45 @@ const renderComments = (post) => {
   bigPictureCommentsSize.textContent = commentsToRender.length.toString();
   bigPictureCommentsTotal.textContent = post.comments.length.toString();
 
-  if (post.comments.length > 5) {
+  if (post.comments.length > COMMENTS_BATCH_SIZE) {
     commentsLoader.classList.remove('hidden');
   } else {
     commentsLoader.classList.add('hidden');
   }
 };
 
-commentsLoader.addEventListener('click', loadMoreComments);
+commentsLoader.addEventListener('click', onLoadMoreCommentsClick);
 
 const close = () => {
   body.classList.remove('modal-open');
   bigPicture.classList.add('hidden');
-
 };
 
 const setupCloseHandlers = () => {
-  const closeHandler = (event) => {
+  const onDocumentKeydown = (event) => {
     if (event.key === 'Escape' || event.code === 'Escape') {
       close();
-      document.removeEventListener('keydown', closeHandler);
+      document.removeEventListener('keydown', onDocumentKeydown);
+      closeButton.removeEventListener('click', onCloseButtonClick);
+      commentsLoader.removeEventListener('click', onLoadMoreCommentsClick);
     }
   };
 
-  document.addEventListener('keydown', closeHandler);
+  document.addEventListener('keydown', onDocumentKeydown);
 
-  if (clickHandler) {
-    closeButton.removeEventListener('click', clickHandler);
-  }
-
-  clickHandler = () => {
+  function onCloseButtonClick(){
     close();
-    closeButton.removeEventListener('click', clickHandler);
-    commentsLoader.removeEventListener('click', loadMoreCommentsHandler);
-  };
-  closeButton.addEventListener('click', clickHandler);
+    closeButton.removeEventListener('click', onCloseButtonClick);
+    commentsLoader.removeEventListener('click', onLoadMoreCommentsClick);
+    document.removeEventListener('keydown', onDocumentKeydown);
+  }
+  closeButton.addEventListener('click', onCloseButtonClick);
 };
 
 const showBigPicture = (post) => {
   openModal();
   renderImageAndDescription(post);
   renderComments(post);
-
-  if (loadMoreCommentsHandler) {
-    commentsLoader.removeEventListener('click', loadMoreCommentsHandler);
-  }
-
-  loadMoreCommentsHandler = loadMoreComments;
-  commentsLoader.addEventListener('click', loadMoreCommentsHandler);
-
   setupCloseHandlers();
 };
 

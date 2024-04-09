@@ -1,9 +1,9 @@
 import showBigPicture from './bigPicture.js';
-let clickHandler = null;
+let onThumbnailClick = null;
 const pictureTemplate = document.querySelector('#picture')
   .content.querySelector('.picture');
 
-const postParser = (post) => {
+const parsePost = (post) => {
   const pictureElement = pictureTemplate.cloneNode(true);
   const image = pictureElement.querySelector('.picture__img');
   const likes = pictureElement.querySelector('.picture__likes');
@@ -13,12 +13,12 @@ const postParser = (post) => {
   likes.textContent = post.likes;
   comments.textContent = post.comments.length;
 
-  if (clickHandler) {
-    pictureElement.removeEventListener('click', clickHandler);
+  if (onThumbnailClick) {
+    pictureElement.removeEventListener('click', onThumbnailClick);
   }
 
-  clickHandler = () => showBigPicture(post);
-  pictureElement.addEventListener('click', clickHandler);
+  onThumbnailClick = () => showBigPicture(post);
+  pictureElement.addEventListener('click', onThumbnailClick);
 
   return pictureElement;
 };
@@ -32,7 +32,7 @@ const createThumbnails = (posts) => {
   const previewPictures = document.querySelectorAll('.picture');
   previewPictures.forEach((picture) => picture.remove());
   posts.forEach((post) => {
-    const pictureElement = postParser(post);
+    const pictureElement = parsePost(post);
     fragment.appendChild(pictureElement);
   });
 

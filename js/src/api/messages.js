@@ -8,7 +8,7 @@ const onMessageButtonClick = () => {
   }
 };
 
-const handleOutsideClick = (event) => {
+const onOutsideClick = (event) => {
   if (!inner.contains(event.target)) {
     closeMessage();
   }
@@ -23,28 +23,28 @@ const displayMessageWithHandlers = (type) => {
   document.body.appendChild(messageElementState);
 
   messageButton.addEventListener('click', onMessageButtonClick);
-  document.addEventListener('click', handleOutsideClick);
-  document.addEventListener('keydown', handleDocumentKeydown);
+  document.addEventListener('click', onOutsideClick);
+  document.addEventListener('keydown', onDocumentKeydown);
 };
 
 function closeMessage() {
   if (messageElementState) {
     messageButton.removeEventListener('click', onMessageButtonClick);
-    document.removeEventListener('click', handleOutsideClick);
-    document.removeEventListener('keydown', handleDocumentKeydown);
+    document.removeEventListener('click', onOutsideClick);
+    document.removeEventListener('keydown', onDocumentKeydown);
     messageElementState.remove();
     messageElementState = null;
   }
 }
 
-function handleDocumentKeydown(event) {
+function onDocumentKeydown(event) {
   if (event.key === 'Escape') {
     event.preventDefault();
     closeMessage();
   }
 }
 
-const timedMessage = (type, time) => {
+const displayTimedMessage = (type, time) => {
   const messageTemplate = document.querySelector(`#${type}`).content.cloneNode(true);
   const messageElement = messageTemplate.querySelector(`.${type}`);
   document.body.appendChild(messageElement);
@@ -55,4 +55,4 @@ const timedMessage = (type, time) => {
 
 const isMessageWithHandlersVisible = () => !!messageElementState;
 
-export { displayMessageWithHandlers, timedMessage, isMessageWithHandlersVisible };
+export { displayMessageWithHandlers, displayTimedMessage, isMessageWithHandlersVisible };
